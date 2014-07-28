@@ -3,7 +3,7 @@ package com.example.movies_lefkowitz;
 public class Movie {
 	private int id;
 	private String title;
-	private String body;
+	private String description;
 	private String url;
 	
 	// getters and setters
@@ -28,18 +28,18 @@ public class Movie {
 		this.url = url;
 	}
 	
-	public String getBody() {
-		return body;
+	public String getDescription() {
+		return description;
 	}
-	public void setBody(String body) {
-		this.body = body;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	// Constructors
 	public Movie(int id, String title, String body, String url) {
 		setId(id);
 		setTitle(title);
-		setBody(body);
+		setDescription(description);
 		setUrl(url);		
 	}
 }
