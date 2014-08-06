@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="11"
         android:targetSdkVersion="19" />
 
     <application
@@ -21,6 +21,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:label="@string/title_activity_details"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.movies_lefkowitz.MainActivity" />
+        </activity>
+        <activity
+            android:name=".InternetSearchActivity"
+            android:label="@string/title_activity_internet_search"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.movies_lefkowitz.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Add_Edit_Activity"
+            android:label="@string/title_activity_add_edit"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.movies_lefkowitz.MainActivity" />
         </activity>
     </application>
 
