@@ -11,13 +11,16 @@
     <string name="title_activity_internet_search">InternetSearchActivity</string>
     <string name="enter_a_movie">Enter a movie</string>
     <string name="button_search">Search</string>
+    <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     
     <string name="detail_item_rt">Tomato Rating</string>
     <string name="detail_item_rating">My Rating</string>
     
     <!--  Add Edit Movie Fragment -->
-   <string name="title_activity_add_edit">Add/Edit a movie</string> 
+    <string name="title_activity_add_edit">Add/Edit a movie</string>
+    <string name="add_edit_pic">Enter a pic URL</string>
+    <string name="add_edit_preview">Preview</string>
     <string name="add_edit_title">What\'s the movie title?</string>
     <string name="add_edit_year">When was it released?</string>
     <string name="add_edit_genre">Genre</string>

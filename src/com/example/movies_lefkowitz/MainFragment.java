@@ -51,7 +51,6 @@ public class MainFragment extends Fragment {
 		setHasOptionsMenu(true);
 	}
 	
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -118,6 +117,7 @@ public class MainFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mMovieCursor.close();
 	}
 
 	private void openDB() {
@@ -126,9 +126,6 @@ public class MainFragment extends Fragment {
 
 	private void populateListViewFromDB() {
 		mMovieCursor = mMyDb.getAllMovies();
-
-		// Allow activity to manage lifetime of the cursor.
-		getActivity().startManagingCursor(mMovieCursor);
 
 		mListview = (ListView) mRootView.findViewById(R.id.main_movie_listview);
 		mAdapter = new MyCursorAdapter(getActivity(), mMovieCursor);

@@ -9,6 +9,41 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.movies_lefkowitz.Add_Edit_Activity$PlaceholderFragment" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/add_edit_thumb"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:src="@drawable/thumb" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/add_edit_pic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/add_edit_pic" 
+                android:inputType="textMultiLine" >
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/add_edit_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/add_edit_preview" >
+            </Button>
+        </LinearLayout>
+    </LinearLayout>
+
     <EditText
         android:id="@+id/add_edit_title"
         android:layout_width="match_parent"
@@ -111,7 +146,7 @@
         android:id="@+id/add_edit_runtime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/add_edit_runtime" 
+        android:hint="@string/add_edit_runtime"
         android:inputType="number" />
 
     <EditText
@@ -154,7 +189,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/add_edit_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save" />
+
+        <Button
+            android:id="@+id/add_edit_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </LinearLayout>
