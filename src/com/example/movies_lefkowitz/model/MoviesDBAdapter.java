@@ -30,19 +30,17 @@ public class MoviesDBAdapter {
 	public static final String KEY_MOVIE_USER_RATING = "user_rating";
 	public static final String KEY_MOVIE_DESCRIPTION = "description";
 	public static final String KEY_MOVIE_CAST = "cast";
-	public static final String KEY_MOVIE_DIRECTOR = "director";
 	
 	
 	public static final String[] ALL_KEYS = new String[] {
 		KEY_ROWID, KEY_MOVIE_PIC, KEY_MOVIE_WATCHED, KEY_MOVIE_TITLE, 
 		KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_RATING, 
 		KEY_MOVIE_RUNTIME, KEY_MOVIE_RT_RATING, KEY_MOVIE_USER_RATING,
-		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR};
+		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST};
 	
 	public static final String[] STRING_KEYS = new String[] {
 		KEY_MOVIE_PIC, KEY_MOVIE_TITLE, KEY_MOVIE_GENRE, 
-		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR
-	};
+		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST};
 	
 	public static final String[] INTEGER_KEYS = new String[] {
 		KEY_MOVIE_WATCHED, KEY_MOVIE_YEAR, KEY_MOVIE_RUNTIME
@@ -65,7 +63,6 @@ public class MoviesDBAdapter {
 	public static final int COL_MOVIE_USER_RATING = 9;
 	public static final int COL_MOVIE_DESCRIPTION = 10;
 	public static final int COL_MOVIE_CAST = 11;
-	public static final int COL_MOVIE_DIRECTOR = 12;
 	
 	// DB info
 	public static final String DATABASE_NAME = "MyMovies";
@@ -85,8 +82,7 @@ public class MoviesDBAdapter {
 			+ KEY_MOVIE_RT_RATING  + " real, "
 			+ KEY_MOVIE_USER_RATING + " real, "
 			+ KEY_MOVIE_DESCRIPTION + " string, "
-			+ KEY_MOVIE_CAST + " string, "
-			+ KEY_MOVIE_DIRECTOR + " string"
+			+ KEY_MOVIE_CAST + " string"
 			+ ");";
 	
 
@@ -121,7 +117,7 @@ public class MoviesDBAdapter {
 	// Add a new set of values to the database.
 	public long addMovie(String [] strings, int[] ints, double[] doubles) {
 		/*
-		 * strings[] {pic_Url, title, genre, description, cast, director}
+		 * strings[] {pic_Url, title, genre, description, cast}
 		 * ints [] {watched, year, runtime}
 		 * double[] {tomato_rating, user_rating}
 		 */
