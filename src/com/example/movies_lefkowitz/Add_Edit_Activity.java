@@ -71,23 +71,22 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			mRootView = inflater.inflate(R.layout.fragment_add_edit,
 					container, false);
 			
-			loadPicFromUrlHandler();
-			genreHandler();
-			ratingHandler();
-			cancelHandler();
-			saveHandler();
+			setLoadPicFromUrlHandler();
+			setGenreHandler();
+			setRatingHandler();
+			setCancelHandler();
+			setSaveHandler();
 			return mRootView;
 		}
 		
-		private void loadPicFromUrlHandler() {
+		private void setLoadPicFromUrlHandler() {
 			EditText eUrl = (EditText) mRootView.findViewById(R.id.add_edit_pic);
 			String url = eUrl.getText().toString().trim();
 			mThumbnail = (ImageView) mRootView.findViewById(R.id.add_edit_thumb);
-			mThumbnail.setImageResource(R.drawable.thumb);
 			new ImageLoader().execute(url);
 		}
 		
-		private void genreHandler() {
+		private void setGenreHandler() {
 			TextView tGenre = (TextView) mRootView.findViewById(R.id.add_edit_genre);
 			tGenre.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -97,11 +96,11 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			});
 		}
 		
-		private void ratingHandler() {
+		private void setRatingHandler() {
 			
 		}
 		
-		private void cancelHandler() {
+		private void setCancelHandler() {
 			Button cancel = (Button) mRootView
 					.findViewById(R.id.add_edit_cancel);
 			cancel.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +111,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			});		
 		}
 		
-		public void saveHandler() {
+		public void setSaveHandler() {
 			Button save = (Button) mRootView
 					.findViewById(R.id.add_edit_save);
 			save.setOnClickListener(new View.OnClickListener() {

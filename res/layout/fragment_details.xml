@@ -18,7 +18,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:maxHeight="150dp"
                 android:src="@drawable/thumb" />
 
             <ImageView
@@ -36,6 +35,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="vertical"
             android:paddingTop="10dp" >
 
@@ -73,7 +73,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp" >
 
                 <ImageView
                     android:id="@+id/detail_item_rating"
@@ -100,6 +101,7 @@
                 android:id="@+id/RelativeLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal" >
 
                 <ImageView
@@ -208,32 +210,6 @@
             android:text="Bruce Willis, Alan Rickman"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="15sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp" >
-
-        <TextView
-            android:id="@+id/detail_item_director_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Director: "
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_item_director"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="John McTiernan"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
-
     </LinearLayout>
 
 </LinearLayout>
