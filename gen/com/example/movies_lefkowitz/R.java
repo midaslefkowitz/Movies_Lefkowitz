@@ -1353,12 +1353,35 @@ containing a value of this type.
         public static final int detail_item_rt=0x7f0a0012;
         public static final int detail_item_starring=0x7f0a0015;
         public static final int enter_a_movie=0x7f0a0017;
+        /**  Add Genres Dialog 
+         */
+        public static final int genre_dialog_action_adventure=0x7f0a002d;
+        public static final int genre_dialog_action_animated=0x7f0a002e;
+        public static final int genre_dialog_action_art_intnl=0x7f0a002f;
+        public static final int genre_dialog_classics=0x7f0a0030;
+        public static final int genre_dialog_comedy=0x7f0a0031;
+        public static final int genre_dialog_documentary=0x7f0a0038;
+        public static final int genre_dialog_drama=0x7f0a0032;
+        public static final int genre_dialog_horror=0x7f0a0033;
+        public static final int genre_dialog_kids_family=0x7f0a0034;
+        public static final int genre_dialog_music_performingarts=0x7f0a0039;
+        public static final int genre_dialog_mystery_suspense=0x7f0a0035;
+        public static final int genre_dialog_romance=0x7f0a0036;
+        public static final int genre_dialog_scifi_fantasy=0x7f0a0037;
+        public static final int genre_dialog_specialinterest=0x7f0a003a;
+        public static final int genre_dialog_sports_fitness=0x7f0a003b;
+        public static final int genre_dialog_tv=0x7f0a003c;
+        public static final int genre_dialog_western=0x7f0a003d;
         public static final int hello_world=0x7f0a000e;
         public static final int save=0x7f0a0019;
         /**   Add Edit Movie Fragment 
          */
         public static final int title_activity_add_edit=0x7f0a001b;
+        /**  Detail Activity Fragment 
+         */
         public static final int title_activity_details=0x7f0a0011;
+        /**  Internet Search Activity Fragment 
+         */
         public static final int title_activity_internet_search=0x7f0a0016;
     }
     public static final class style {
