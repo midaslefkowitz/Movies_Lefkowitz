@@ -197,7 +197,7 @@
             android:id="@+id/detail_item_starring"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Starring: "
+            android:text="@string/detail_item_starring"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -212,4 +212,28 @@
             android:textSize="15sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp" >
+
+        <TextView
+            android:id="@+id/detail_item_directed_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_item_directed_by"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_item_director"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Placeholder"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>
