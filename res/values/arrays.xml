@@ -19,4 +19,13 @@
         <item>Television</item>
         <item>Western</item>
     </string-array>
+    
+    <string-array name="ratings">
+		<item>Unrated</item>
+		<item>G</item>
+		<item>PG</item>
+		<item>PG-13</item>
+		<item>R</item>
+		<item>NC-17</item>
+    </string-array>
 </resources>

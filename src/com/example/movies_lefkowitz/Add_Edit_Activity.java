@@ -62,13 +62,15 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	public static class PlaceholderFragment extends Fragment {
 		private static String GENRE_DIALOG_TAG = "genre dialog";
 		private static int REQUEST_GENRE = 0;
+		private static int REQUEST_RATING = 1;
 		private View mRootView;
 		private String mGenre;
 		private ArrayList<String> mGenreArray;
 		private String mRating;
 		private ImageView mThumbnail;
 		private boolean mValidUrl;
-		private TextView genreTV;
+		private TextView mGenreTV;
+		private TextView mRatingTV;
 
 		public PlaceholderFragment() {
 		}
@@ -110,10 +112,10 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				}
 				mGenre = sb.substring(0, sb.length() - 2).toString();
 			} else {
-				mGenre = "Genre";
+				mGenre = getString(R.string.add_edit_genre);
 			}
-			genreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
-			genreTV.setText(mGenre);
+			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
+			mGenreTV.setText(mGenre);
 		}
 
 		private void setLoadPicFromUrlHandler() {
@@ -126,8 +128,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		}
 
 		private void setGenreHandler() {
-			genreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
-			genreTV.setOnClickListener(new View.OnClickListener() {
+			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
+			mGenreTV.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					FragmentManager fm = getActivity()
@@ -139,11 +141,21 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					dialog.show(fm, GENRE_DIALOG_TAG);
 				}
 			});
-
 		}
 
 		private void setRatingHandler() {
-			
+			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
+			mRatingTV.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					FragmentManager fm = getActivity().getSupportFragmentManager();
+					RatingPickerFragment dialog = new RatingPickerFragment();
+					//RatingPickerFragment dialog = RatingPickerFragment.newInstance(mRating);
+					dialog.setTargetFragment(PlaceholderFragment.this,
+							REQUEST_GENRE);
+					dialog.show(fm, GENRE_DIALOG_TAG);
+				}
+			});
 		}
 
 		private void setCancelHandler() {

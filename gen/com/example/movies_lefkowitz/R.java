@@ -18,6 +18,7 @@ public final class R {
     }
     public static final class array {
         public static final int genres=0x7f0c0000;
+        public static final int ratings=0x7f0c0001;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -1321,21 +1322,15 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_add=0x7f0a0010;
         public static final int action_settings=0x7f0a000f;
-        public static final int add_edit_cast=0x7f0a002c;
-        public static final int add_edit_description=0x7f0a002a;
-        public static final int add_edit_director=0x7f0a002d;
+        public static final int add_edit_cast=0x7f0a0026;
+        public static final int add_edit_description=0x7f0a0024;
+        public static final int add_edit_director=0x7f0a0027;
         public static final int add_edit_genre=0x7f0a0021;
-        public static final int add_edit_my_rating=0x7f0a002b;
+        public static final int add_edit_my_rating=0x7f0a0025;
         public static final int add_edit_pic=0x7f0a001d;
         public static final int add_edit_preview=0x7f0a001e;
-        public static final int add_edit_rating_G=0x7f0a0024;
-        public static final int add_edit_rating_NC17=0x7f0a0028;
-        public static final int add_edit_rating_PG=0x7f0a0025;
-        public static final int add_edit_rating_PG13=0x7f0a0026;
-        public static final int add_edit_rating_R=0x7f0a0027;
-        public static final int add_edit_rating_UR=0x7f0a0023;
         public static final int add_edit_rating_select=0x7f0a0022;
-        public static final int add_edit_runtime=0x7f0a0029;
+        public static final int add_edit_runtime=0x7f0a0023;
         public static final int add_edit_title=0x7f0a001f;
         public static final int add_edit_year=0x7f0a0020;
         public static final int app_name=0x7f0a000d;
@@ -1346,28 +1341,12 @@ containing a value of this type.
         public static final int detail_item_rt=0x7f0a0015;
         public static final int detail_item_starring=0x7f0a0018;
         public static final int enter_a_movie=0x7f0a001a;
-        public static final int genre_dialog_action_adventure=0x7f0a002f;
-        public static final int genre_dialog_animated=0x7f0a0030;
-        public static final int genre_dialog_art_intnl=0x7f0a0031;
-        public static final int genre_dialog_classics=0x7f0a0032;
-        public static final int genre_dialog_comedy=0x7f0a0033;
-        public static final int genre_dialog_documentary=0x7f0a003a;
-        public static final int genre_dialog_drama=0x7f0a0034;
-        public static final int genre_dialog_horror=0x7f0a0035;
-        public static final int genre_dialog_kids_family=0x7f0a0036;
-        public static final int genre_dialog_music_performingarts=0x7f0a003b;
-        public static final int genre_dialog_mystery_suspense=0x7f0a0037;
-        public static final int genre_dialog_romance=0x7f0a0038;
-        public static final int genre_dialog_scifi_fantasy=0x7f0a0039;
-        public static final int genre_dialog_specialinterest=0x7f0a003c;
-        public static final int genre_dialog_sports_fitness=0x7f0a003d;
-        public static final int genre_dialog_tv=0x7f0a003e;
-        public static final int genre_dialog_western=0x7f0a003f;
-        /**  Add Genres Dialog 
+        /**  Dialogs 
          */
-        public static final int genre_fragment_title=0x7f0a002e;
+        public static final int genre_fragment_title=0x7f0a0028;
         public static final int hello_world=0x7f0a000e;
         public static final int ok=0x7f0a0013;
+        public static final int rating_fragment_title=0x7f0a0029;
         public static final int save=0x7f0a0011;
         /**  Add Edit Movie Fragment 
          */

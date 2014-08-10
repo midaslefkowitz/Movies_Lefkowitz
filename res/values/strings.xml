@@ -29,36 +29,14 @@
     <string name="add_edit_year">When was it released?</string>
     <string name="add_edit_genre">Genre</string>
     <string name="add_edit_rating_select">Pick an MPAA rating</string>
-    <string name="add_edit_rating_UR">Unrated</string>
-    <string name="add_edit_rating_G">G</string>
-    <string name="add_edit_rating_PG">PG</string>
-    <string name="add_edit_rating_PG13">PG-13</string>
-    <string name="add_edit_rating_R">R</string>
-    <string name="add_edit_rating_NC17">NC-17</string>
     <string name="add_edit_runtime">Movie length (minutes)?</string>
     <string name="add_edit_description">Describe the movie</string>
     <string name="add_edit_my_rating">Want to rate this movie?</string>
     <string name="add_edit_cast">Who\'s in the movie?</string>
     <string name="add_edit_director">Who directed the movie?</string>
 
-    <!-- Add Genres Dialog -->
-    <string name="genre_fragment_title">Genres:</string>
-    <string name="genre_dialog_action_adventure">Action &amp; Adventure</string>
-    <string name="genre_dialog_animated">Animated</string>
-    <string name="genre_dialog_art_intnl">Art House &amp; International</string>
-    <string name="genre_dialog_classics">Classics</string>
-    <string name="genre_dialog_comedy">Comedy</string>
-    <string name="genre_dialog_drama">Drama</string>
-    <string name="genre_dialog_horror">Horror</string>
-    <string name="genre_dialog_kids_family">Kids &amp; Family</string>
-    <string name="genre_dialog_mystery_suspense">Mystery &amp; Suspense</string>
-    <string name="genre_dialog_romance">Romance</string>
-    <string name="genre_dialog_scifi_fantasy">Science Fiction &amp; Fantasy</string>
-    <string name="genre_dialog_documentary">Documentary</string>
-    <string name="genre_dialog_music_performingarts">Musical &amp; Performing Arts</string>
-    <string name="genre_dialog_specialinterest">Special Interest</string>
-    <string name="genre_dialog_sports_fitness">Sports &amp; Fitness</string>
-    <string name="genre_dialog_tv">Television</string>
-    <string name="genre_dialog_western">Western</string>
+    <!-- Dialogs -->
+    <string name="genre_fragment_title">Pick Relevant Genres:</string>
+    <string name="rating_fragment_title">Choose a Rating:</string>
 
 </resources>
