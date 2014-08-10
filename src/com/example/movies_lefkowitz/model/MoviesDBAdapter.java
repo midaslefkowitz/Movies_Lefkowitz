@@ -41,7 +41,8 @@ public class MoviesDBAdapter {
 	
 	public static final String[] STRING_KEYS = new String[] {
 		KEY_MOVIE_PIC, KEY_MOVIE_TITLE, KEY_MOVIE_GENRE, 
-		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR
+		KEY_MOVIE_RATING, KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, 
+		KEY_MOVIE_DIRECTOR
 	};
 	
 	public static final String[] INTEGER_KEYS = new String[] {
@@ -121,7 +122,7 @@ public class MoviesDBAdapter {
 	// Add a new set of values to the database.
 	public long addMovie(String [] strings, int[] ints, double[] doubles) {
 		/*
-		 * strings[] {pic_Url, title, genre, description, cast, director}
+		 * strings[] {pic_Url, title, genre, movie rating, description, cast, director}
 		 * ints [] {watched, year, runtime}
 		 * double[] {tomato_rating, user_rating}
 		 */
@@ -131,10 +132,18 @@ public class MoviesDBAdapter {
 			newMovieValues.put(STRING_KEYS[i], strings[i]);
 		}
 		for (int i=0; i<ints.length; i++) {
-			newMovieValues.put(INTEGER_KEYS[i], ints[i]);
+			if (ints[i]>=0) {
+				newMovieValues.put(INTEGER_KEYS[i], ints[i]);
+			} else {
+				newMovieValues.putNull(INTEGER_KEYS[i]);
+			}
 		}
 		for (int i=0; i<doubles.length; i++) {
-			newMovieValues.put(REAL_KEYS[i], doubles[i]);
+			if (doubles[i]>=0) {
+				newMovieValues.put(REAL_KEYS[i], doubles[i]);
+			} else {
+				newMovieValues.putNull(REAL_KEYS[i]);
+			}
 		}
 		try {
 			db.insertOrThrow(DATABASE_TABLE, null, newMovieValues);

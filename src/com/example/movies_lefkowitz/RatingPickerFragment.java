@@ -19,7 +19,7 @@ public class RatingPickerFragment extends DialogFragment {
 		mRatingsArray = getResources().getStringArray(R.array.ratings);
 		
 		return new AlertDialog.Builder(getActivity())
-			.setTitle(R.string.genre_fragment_title)
+			.setTitle(R.string.rating_fragment_title)
 			.setItems(R.array.ratings,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {

@@ -23,8 +23,9 @@
 
     <!-- Add Edit Movie Fragment -->
     <string name="title_activity_add_edit">Add/Edit a movie</string>
-    <string name="add_edit_pic">Enter a pic URL</string>
-    <string name="add_edit_preview">Preview</string>
+    <string name="add_edit_watched">Seen the movie?</string>
+    <string name="add_edit_pic">Enter a URL for a thumbnail</string>
+    <string name="add_edit_preview">Preview the Thumbnail</string>
     <string name="add_edit_title">What\'s the movie title?</string>
     <string name="add_edit_year">When was it released?</string>
     <string name="add_edit_genre">Genre</string>
@@ -36,6 +37,7 @@
     <string name="add_edit_director">Who directed the movie?</string>
 
     <!-- Dialogs -->
+    <string name="year_fragment_title">Year the Movie was Released?</string>
     <string name="genre_fragment_title">Pick Relevant Genres:</string>
     <string name="rating_fragment_title">Choose a Rating:</string>
 

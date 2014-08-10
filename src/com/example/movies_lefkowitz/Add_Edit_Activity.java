@@ -6,7 +6,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import com.example.movies_lefkowitz.model.MoviesDBAdapter;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,9 +24,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Add_Edit_Activity extends ActionBarActivity {
 
@@ -60,17 +67,26 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		private static String YEAR_DIALOG_TAG = "year dialog";
 		private static String GENRE_DIALOG_TAG = "genre dialog";
+		private static String RATING_DIALOG_TAG = "rating dialog";		
 		private static int REQUEST_GENRE = 0;
 		private static int REQUEST_RATING = 1;
+		private static int REQUEST_YEAR = 2;
 		private View mRootView;
-		private String mGenre;
-		private ArrayList<String> mGenreArray;
-		private String mRating;
 		private ImageView mThumbnail;
-		private boolean mValidUrl;
+		private TextView mYearTV;
 		private TextView mGenreTV;
 		private TextView mRatingTV;
+		private TextView mMyRatingTV;
+		private SeekBar sb;
+
+		private boolean mValidUrl;
+		private ArrayList<String> mGenreArray;
+		private String mGenre;
+		private String mRating = ""; 
+		private boolean mHasRated = false;
+		private double mMyRating;
 
 		public PlaceholderFragment() {
 		}
@@ -80,10 +96,11 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_add_edit, container,
 					false);
-			setGenreTV();
 			setLoadPicFromUrlHandler();
+			setGenreTV();
 			setGenreHandler();
 			setRatingHandler();
+			setSeekBarHandler();
 			setCancelHandler();
 			setSaveHandler();
 			return mRootView;
@@ -107,7 +124,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		}
 
 		private void setGenreTV() {
-			if (mGenreArray != null) {
+			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
+			if (mGenreArray != null && mGenreArray.size() > 0) {
 				StringBuilder sb = new StringBuilder();
 				mGenre = "";
 				for (int i = 0, len = mGenreArray.size(); i < len; i++) {
@@ -115,19 +133,20 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					sb.append(", ");
 				}
 				mGenre = sb.substring(0, sb.length() - 2).toString();
+				mGenreTV.setText(mGenre);
 			} else {
 				mGenre = getString(R.string.add_edit_genre);
+				mGenreTV.setHint(mGenre);
 			}
-			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
-			mGenreTV.setText(mGenre);
 		}
 
 		private void setRatingTV() {
-			if (mRating == null) {
-				mRating = getString(R.string.add_edit_rating_select);
-			}
 			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
-			mRatingTV.setText("Rating: " + mRating);
+			if (mRating == null) {
+				mRatingTV.setHint(R.string.add_edit_rating_select);
+			} else {
+				mRatingTV.setText("Rating: " + mRating);
+			}
 		}
 
 		private void setLoadPicFromUrlHandler() {
@@ -165,11 +184,34 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					//RatingPickerFragment dialog = RatingPickerFragment.newInstance(mRating);
 					dialog.setTargetFragment(PlaceholderFragment.this,
 							REQUEST_RATING);
-					dialog.show(fm, GENRE_DIALOG_TAG);
+					dialog.show(fm, RATING_DIALOG_TAG);
 				}
 			});
 		}
 
+		private void setSeekBarHandler() {
+			sb = (SeekBar) mRootView.findViewById(R.id.add_edit_my_rating_SB);
+			mMyRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_my_rating_TV2);
+			sb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+				}
+				
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+					mHasRated = true;
+				}
+				
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progress,
+						boolean fromUser) {
+					mMyRating = (double) progress/10;
+					mMyRatingTV.setText(mMyRating + "/" + (sb.getMax()/10));
+				}
+			});
+		}
+		
 		private void setCancelHandler() {
 			Button cancel = (Button) mRootView
 					.findViewById(R.id.add_edit_cancel);
@@ -186,23 +228,61 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			save.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					//get title and check if entered
+					EditText titleEditText = (EditText) mRootView
+							.findViewById(R.id.add_edit_title);
+					String title = titleEditText.getText().toString().trim();
+					if (title == null) {
+						Toast.makeText( 
+							 	getActivity(), 
+							 	"You need to enter a title", 
+							 	Toast.LENGTH_LONG)
+							 .show();
+						return;
+					}
+					// get watched
+					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
+					int watched = watchedCB.isChecked() ? 1 : 0;
 					// get pic URL
-					EditText ePic = (EditText) mRootView
+					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
 					String pic = null;
 					if (mValidUrl) { // ensure that saving a valid url
-						pic = ePic.getText().toString().trim();
+						pic = picEditText.getText().toString().trim();
 					}
-					// get title
-					EditText eTitle = (EditText) mRootView
-							.findViewById(R.id.add_edit_title);
-					String title = eTitle.getText().toString().trim();
 					// get year
-					EditText eYear = (EditText) mRootView
-							.findViewById(R.id.add_edit_year);
-					int year = Integer.parseInt(eYear.getText().toString()
-							.trim());
+					EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);
+					String yearText = yearEditText.getText().toString().trim();
+					int year = (yearText.length()>0) ? Integer.parseInt(yearText) : -1;
 					// get genre
+					String genre = mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre;
+					// get rating
+					String rating = mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating;
+					// get runtime
+					EditText runtimeEditText = (EditText) mRootView.findViewById(R.id.add_edit_runtime);
+					String runtimeText = yearEditText.getText().toString().trim();
+					int runtime = (runtimeText.length()>0) ? Integer.parseInt(runtimeText) : -1;
+					// get description
+					EditText dscrptnEditText = (EditText) mRootView.findViewById(R.id.add_edit_description);
+					String description = dscrptnEditText.getText().toString().trim();
+					// get User Rating
+					double userRating = (!mHasRated && mMyRating==0) ? -1 : mMyRating;
+					// get cast
+					EditText castEditText = (EditText) mRootView.findViewById(R.id.add_edit_cast);
+					String cast = castEditText.getText().toString().trim();
+					// get director
+					EditText dirEditText = (EditText) mRootView.findViewById(R.id.add_edit_director);
+					String director = dirEditText.getText().toString().trim();
+					// Tomato rating
+					double rtRating = -1;
+					
+					
+					String [] movieStrings =  {pic, title, genre, rating, description, cast, director};
+					int[] movieInts = {watched, year, runtime};
+					double[] movieDoubles = {rtRating, userRating};
+					
+					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
+					db.addMovie(movieStrings, movieInts, movieDoubles);
 				}
 			});
 		}

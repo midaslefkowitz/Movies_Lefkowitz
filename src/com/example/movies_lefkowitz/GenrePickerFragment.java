@@ -45,9 +45,9 @@ public class GenrePickerFragment extends DialogFragment {
 			}
 		}
 
-		// Use the Builder class for convenient dialog construction
+		
 		return new AlertDialog.Builder(getActivity())
-				.setTitle(R.string.genre_fragment_title)
+				.setTitle(R.string.genre_fragment_title) // Set the title
 				.setMultiChoiceItems(R.array.genres, // Specify the list array,
 						mSelected, // the items to be selected by default 
 						// and the listener through which to receive callbacks
