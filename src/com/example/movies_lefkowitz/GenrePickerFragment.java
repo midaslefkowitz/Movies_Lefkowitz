@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -28,22 +27,9 @@ public class GenrePickerFragment extends DialogFragment {
 		return fragment;
 	}
 
-	private void sendResult(int resultCode) {
-		if (getTargetFragment() == null) {
-			return;
-		}
-
-		Intent i = new Intent();
-		i.putExtra(EXTRA_GENRES, mSelectedItems);
-
-		getTargetFragment().onActivityResult(getTargetRequestCode(),
-				resultCode, i);
-	}
-
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Resources res = getResources();
-		mGenresArray = res.getStringArray(R.array.genres);
+		mGenresArray = getResources().getStringArray(R.array.genres);
 		mSelected = new boolean[mGenresArray.length];
 		// There are selected genres
 		if (getArguments() != null) {
@@ -89,6 +75,24 @@ public class GenrePickerFragment extends DialogFragment {
 									int which) {
 								sendResult(Activity.RESULT_OK);
 							}
-						}).setNegativeButton(R.string.cancel, null).create();
+						})
+				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dismiss();
+							}
+						})
+				.create();
+	}
+	
+	private void sendResult(int resultCode) {
+		if (getTargetFragment() == null) {
+			return;
+		}
+
+		Intent i = new Intent();
+		i.putExtra(EXTRA_GENRES, mSelectedItems);
+
+		getTargetFragment().onActivityResult(getTargetRequestCode(),
+				resultCode, i);
 	}
 }

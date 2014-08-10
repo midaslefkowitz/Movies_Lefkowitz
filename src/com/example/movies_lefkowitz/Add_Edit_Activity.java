@@ -100,6 +100,10 @@ public class Add_Edit_Activity extends ActionBarActivity {
 						.getStringArrayListExtra(GenrePickerFragment.EXTRA_GENRES);
 				setGenreTV();
 			}
+			if (requestCode == REQUEST_RATING) {
+				mRating = (String) data.getStringExtra(RatingPickerFragment.EXTRA_RATINGS);
+				setRatingTV();
+			}
 		}
 
 		private void setGenreTV() {
@@ -116,6 +120,14 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			}
 			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
 			mGenreTV.setText(mGenre);
+		}
+
+		private void setRatingTV() {
+			if (mRating == null) {
+				mRating = getString(R.string.add_edit_rating_select);
+			}
+			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
+			mRatingTV.setText("Rating: " + mRating);
 		}
 
 		private void setLoadPicFromUrlHandler() {
@@ -152,7 +164,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					RatingPickerFragment dialog = new RatingPickerFragment();
 					//RatingPickerFragment dialog = RatingPickerFragment.newInstance(mRating);
 					dialog.setTargetFragment(PlaceholderFragment.this,
-							REQUEST_GENRE);
+							REQUEST_RATING);
 					dialog.show(fm, GENRE_DIALOG_TAG);
 				}
 			});
