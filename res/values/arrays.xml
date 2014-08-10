@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="genres">
+        <item>Action &amp; Adventure</item>
+        <item>Animated</item>
+        <item>Art House &amp; International</item>
+        <item>Classics</item>
+        <item>Comedy</item>
+        <item>Drama</item>
+        <item>Horror</item>
+        <item>Kids &amp; Family</item>
+        <item>Mystery &amp; Suspense</item>
+        <item>Romance</item>
+        <item>Science Fiction &amp; Fantasy</item>
+        <item>Documentary</item>
+        <item>Musical &amp; Performing Arts</item>
+        <item>Special Interest</item>
+        <item>Sports &amp; Fitness</item>
+        <item>Television</item>
+        <item>Western</item>
+    </string-array>
+</resources>

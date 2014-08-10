@@ -80,7 +80,8 @@
                 android:layout_marginTop="5dp"
                 android:text="@string/add_edit_rating_select"
                 android:textSize="19sp" />
-
+            
+            <!--  
             <RadioGroup
                 android:id="@+id/add_edit_rating_group"
                 android:layout_width="275dp"
@@ -147,6 +148,7 @@
                     </TableRow>
                 </TableLayout>
             </RadioGroup>
+            -->
 
             <EditText
                 android:id="@+id/add_edit_runtime"
