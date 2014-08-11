@@ -1175,10 +1175,10 @@ containing a value of this type.
         public static final int list_item=0x7f050029;
         public static final int list_item_check=0x7f05006a;
         public static final int list_item_description=0x7f05006d;
-        public static final int list_item_my_rating=0x7f050071;
+        public static final int list_item_my_rating=0x7f050070;
+        public static final int list_item_my_rating_icon=0x7f050071;
         public static final int list_item_rt_icon=0x7f05006e;
         public static final int list_item_rt_rating=0x7f05006f;
-        public static final int list_item_star_icon=0x7f050070;
         public static final int list_item_thumb=0x7f050069;
         public static final int list_item_title=0x7f05006b;
         public static final int list_item_year=0x7f05006c;

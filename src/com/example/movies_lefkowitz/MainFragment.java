@@ -40,7 +40,7 @@ public class MainFragment extends Fragment {
 	private Cursor mMovieCursor;
 	private MyCursorAdapter mAdapter;
 	private View mRootView;
-	private ImageView thumbnail;
+	private ImageView mThumbnailIV;
 
 	protected static final int REQUEST_SEARCH = 0;
 	protected static final int REQUEST_MANUAL = 1;
@@ -88,19 +88,6 @@ public class MainFragment extends Fragment {
 			});
 
 			builder.setNegativeButton("Manual", new OnClickListener() {
-
-				/*
-				public void onClick(View v) {
-				    Fragment fragment = new TwoFragment();
-				    fragment.setTargetFragment(this, -1);
-
-				    getFragmentManager()
-				        .beginTransaction()
-				        .replace(R.id.frame, fragment, TwoFragment.TAG)
-				        .addToBackStack(null)
-				        .commit();
-				  }
-				*/
 				
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
@@ -180,34 +167,49 @@ public class MainFragment extends Fragment {
 		@Override
 		public void bindView(View movieView, Context context, Cursor cursor) {
 
-			thumbnail = (ImageView) movieView
+			mThumbnailIV = (ImageView) movieView
 					.findViewById(R.id.list_item_thumb);
-			ImageView watchCheck = (ImageView) movieView
+			ImageView watchCheckIV = (ImageView) movieView
 					.findViewById(R.id.list_item_check);
-			TextView title = (TextView) movieView
+			TextView titleTV = (TextView) movieView
 					.findViewById(R.id.list_item_title);
-			TextView year = (TextView) movieView
+			TextView yearTV = (TextView) movieView
 					.findViewById(R.id.list_item_year);
-			TextView description = (TextView) movieView
+			TextView descriptionTV = (TextView) movieView
 					.findViewById(R.id.list_item_description);
-			TextView rt_rating = (TextView) movieView
+			TextView rt_ratingTV = (TextView) movieView
 					.findViewById(R.id.list_item_rt_rating);
-			TextView my_rating = (TextView) movieView
+			TextView my_ratingTV = (TextView) movieView
 					.findViewById(R.id.list_item_my_rating);
 
-			thumbnail.setImageResource(R.drawable.thumb);
+			mThumbnailIV.setImageResource(R.drawable.thumb);
 			new ImageLoader().execute(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)));
-			watchCheck.setImageResource(R.drawable.checkmark_grey);
-			title.setText(cursor.getString(cursor
+			
+			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
+			if (cursor.getInt(cursor
+					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED)) == 0) {
+				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+			} else {
+				watchCheckIV.setImageResource(R.drawable.checkmark_green);
+			}
+			titleTV.setText(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE)));
-			year.setText(Integer.toString(cursor.getInt(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR))));
-			description.setText(cursor.getString(cursor
+			/* Displayed year depends on if database has a year */
+			int year = cursor.getInt(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR));
+			if (year <= 0) {
+				yearTV.setText("");
+			} else {
+				yearTV.setText(Integer.toString(year));
+			}
+			/* Display description */
+			descriptionTV.setText(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DESCRIPTION)));
-			rt_rating.setText(Double.toString(cursor.getDouble(cursor
+			
+			rt_ratingTV.setText(Double.toString(cursor.getDouble(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_RT_RATING))));
-			my_rating.setText(Integer.toString(cursor.getInt(cursor
+			
+			my_ratingTV.setText(Double.toString(cursor.getInt(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_USER_RATING))));
 		}
 
@@ -238,7 +240,7 @@ public class MainFragment extends Fragment {
 		@Override
 		protected void onPostExecute(Bitmap image) {
 			if (image != null) {
-				thumbnail.setImageBitmap(image);
+				mThumbnailIV.setImageBitmap(image);
 			}
 		}
 	}

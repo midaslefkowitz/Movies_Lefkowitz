@@ -328,10 +328,10 @@ int id listMode 0x7f050001
 int id list_item 0x7f050029
 int id list_item_check 0x7f05006a
 int id list_item_description 0x7f05006d
-int id list_item_my_rating 0x7f050071
+int id list_item_my_rating 0x7f050070
+int id list_item_my_rating_icon 0x7f050071
 int id list_item_rt_icon 0x7f05006e
 int id list_item_rt_rating 0x7f05006f
-int id list_item_star_icon 0x7f050070
 int id list_item_thumb 0x7f050069
 int id list_item_title 0x7f05006b
 int id list_item_year 0x7f05006c
