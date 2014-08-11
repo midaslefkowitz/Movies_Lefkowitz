@@ -67,7 +67,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		private static String GENRE_DIALOG_TAG = "genre dialog";
-		private static String RATING_DIALOG_TAG = "rating dialog";		
+		private static String RATING_DIALOG_TAG = "rating dialog";	
+		//private static String EXTRA_ADD_EDIT = "com.example.www.movies_lefkowitz.add_edit";
 		private static int REQUEST_GENRE = 0;
 		private static int REQUEST_RATING = 1;
 		private View mRootView;
@@ -279,10 +280,12 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					
 					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
 					db.addMovie(movieStrings, movieInts, movieDoubles);
+					getActivity().setResult(RESULT_OK);
+					getActivity().finish();
 				}
 			});
 		}
-
+		
 		private class ImageLoader extends AsyncTask<String, String, Bitmap> {
 			Bitmap bitmap;
 

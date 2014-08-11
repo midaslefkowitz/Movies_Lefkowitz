@@ -2,6 +2,7 @@ package com.example.movies_lefkowitz;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,7 +28,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.movies_lefkowitz.Add_Edit_Activity.PlaceholderFragment;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class MainFragment extends Fragment {
@@ -39,8 +42,8 @@ public class MainFragment extends Fragment {
 	private View mRootView;
 	private ImageView thumbnail;
 
-	protected final static int SEARCH_MOVIE_REQUEST_CODE = 1234;
-	protected final static int MANUALLY_ADD_MOVIE_REQUEST_CODE = 6789;
+	protected static final int REQUEST_SEARCH = 0;
+	protected static final int REQUEST_MANUAL = 1;
 	
 	public MainFragment() {
 	}
@@ -80,21 +83,31 @@ public class MainFragment extends Fragment {
 				public void onClick(DialogInterface arg0, int arg1) {
 					Intent searchActivityIntent = new Intent(
 							getActivity(), InternetSearchActivity.class);
-					startActivityForResult(searchActivityIntent,
-							SEARCH_MOVIE_REQUEST_CODE);
-
+					startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
 				}
 			});
 
 			builder.setNegativeButton("Manual", new OnClickListener() {
 
+				/*
+				public void onClick(View v) {
+				    Fragment fragment = new TwoFragment();
+				    fragment.setTargetFragment(this, -1);
+
+				    getFragmentManager()
+				        .beginTransaction()
+				        .replace(R.id.frame, fragment, TwoFragment.TAG)
+				        .addToBackStack(null)
+				        .commit();
+				  }
+				*/
+				
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
 					Intent editActivityIntent = new Intent(getActivity(),
 							Add_Edit_Activity.class);
-					startActivityForResult(editActivityIntent,
-							MANUALLY_ADD_MOVIE_REQUEST_CODE);
-
+					setTargetFragment(MainFragment.this, REQUEST_MANUAL);
+					startActivityForResult(editActivityIntent, REQUEST_MANUAL);
 				}
 			});
 
@@ -141,6 +154,24 @@ public class MainFragment extends Fragment {
 		registerForContextMenu(mListview);
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode,
+			Intent data) {
+		if (resultCode != Activity.RESULT_OK) {
+			Toast.makeText( 
+				 	getActivity(), 
+				 	"Some sort of error", 
+				 	Toast.LENGTH_SHORT)
+				 .show();
+			return;
+		}
+		if (requestCode == REQUEST_MANUAL) {
+			mMovieCursor = mMyDb.getAllMovies();
+			mAdapter.swapCursor(mMovieCursor);
+			
+		}
+	}
+	
 	private class MyCursorAdapter extends CursorAdapter {
 		public MyCursorAdapter(Context context, Cursor cursor) {
 			super(context, cursor, true);
