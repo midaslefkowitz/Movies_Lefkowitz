@@ -104,7 +104,7 @@ public class MoviesDBAdapter {
 	
 	// Open the database connection write.
 	private MoviesDBAdapter openWriteable() {
-		db = myDBHelper.getWritableDatabase();
+ 		db = myDBHelper.getWritableDatabase();
 		return this;
 	}
 	
@@ -120,7 +120,7 @@ public class MoviesDBAdapter {
 	}
 	
 	// Add a new set of values to the database.
-	public long addMovie(String [] strings, int[] ints, double[] doubles) {
+	public void addMovie(String [] strings, int[] ints, double[] doubles) {
 		/*
 		 * strings[] {pic_Url, title, genre, movie rating, description, cast, director}
 		 * ints [] {watched, year, runtime}
@@ -153,7 +153,6 @@ public class MoviesDBAdapter {
 		} finally {
 			close();
 		}
-		return db.insert(DATABASE_TABLE, null, newMovieValues);
 	}
 	
 	// Delete a row from the database, by rowId (primary key)

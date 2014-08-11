@@ -6,10 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.example.movies_lefkowitz.model.MoviesDBAdapter;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +28,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class Add_Edit_Activity extends ActionBarActivity {
 
@@ -67,15 +66,12 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-		private static String YEAR_DIALOG_TAG = "year dialog";
 		private static String GENRE_DIALOG_TAG = "genre dialog";
 		private static String RATING_DIALOG_TAG = "rating dialog";		
 		private static int REQUEST_GENRE = 0;
 		private static int REQUEST_RATING = 1;
-		private static int REQUEST_YEAR = 2;
 		private View mRootView;
 		private ImageView mThumbnail;
-		private TextView mYearTV;
 		private TextView mGenreTV;
 		private TextView mRatingTV;
 		private TextView mMyRatingTV;
@@ -232,7 +228,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					EditText titleEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_title);
 					String title = titleEditText.getText().toString().trim();
-					if (title == null) {
+					if (title == null || title.length()==0) {
 						Toast.makeText( 
 							 	getActivity(), 
 							 	"You need to enter a title", 
@@ -255,12 +251,12 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					String yearText = yearEditText.getText().toString().trim();
 					int year = (yearText.length()>0) ? Integer.parseInt(yearText) : -1;
 					// get genre
-					String genre = mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre;
+					String genre = mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre; //change to null?
 					// get rating
 					String rating = mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating;
 					// get runtime
 					EditText runtimeEditText = (EditText) mRootView.findViewById(R.id.add_edit_runtime);
-					String runtimeText = yearEditText.getText().toString().trim();
+					String runtimeText = runtimeEditText.getText().toString().trim();
 					int runtime = (runtimeText.length()>0) ? Integer.parseInt(runtimeText) : -1;
 					// get description
 					EditText dscrptnEditText = (EditText) mRootView.findViewById(R.id.add_edit_description);
