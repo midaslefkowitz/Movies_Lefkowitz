@@ -77,11 +77,14 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private TextView mRatingTV;
 		private TextView mMyRatingTV;
 		private SeekBar sb;
+		private EditText eUrl;
 
+		
 		private boolean mValidUrl;
 		private ArrayList<String> mGenreArray;
 		private String mGenre;
 		private String mRating = ""; 
+		private String url;
 		private boolean mHasRated = false;
 		private double mMyRating;
 
@@ -147,12 +150,21 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		}
 
 		private void setLoadPicFromUrlHandler() {
-			EditText eUrl = (EditText) mRootView
+			eUrl = (EditText) mRootView
 					.findViewById(R.id.add_edit_pic);
-			String url = eUrl.getText().toString().trim();
+			
 			mThumbnail = (ImageView) mRootView
 					.findViewById(R.id.add_edit_thumb);
-			new ImageLoader().execute(url);
+			Button previewButton = (Button) mRootView.findViewById(R.id.add_edit_preview);
+			previewButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					url = eUrl.getText().toString().trim();
+					ImageLoader il = new ImageLoader();					
+					il.execute(url);	
+				}
+			});
+			
 		}
 
 		private void setGenreHandler() {

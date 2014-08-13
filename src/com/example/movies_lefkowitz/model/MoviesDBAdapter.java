@@ -38,21 +38,7 @@ public class MoviesDBAdapter {
 		KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_RATING, 
 		KEY_MOVIE_RUNTIME, KEY_MOVIE_RT_RATING, KEY_MOVIE_USER_RATING,
 		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR};
-	
-	public static final String[] STRING_KEYS = new String[] {
-		KEY_MOVIE_PIC, KEY_MOVIE_TITLE, KEY_MOVIE_GENRE, 
-		KEY_MOVIE_RATING, KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, 
-		KEY_MOVIE_DIRECTOR
-	};
-	
-	public static final String[] INTEGER_KEYS = new String[] {
-		KEY_MOVIE_WATCHED, KEY_MOVIE_YEAR, KEY_MOVIE_RUNTIME
-	};
-	
-	public static final String[] REAL_KEYS = new String[] {
-		KEY_MOVIE_RT_RATING, KEY_MOVIE_USER_RATING
-	};
-	
+		
 	// Column numbers
 	public static final int COL_ROWID = 0;
 	public static final int COL_MOVIE_PIC = 1;
@@ -90,7 +76,6 @@ public class MoviesDBAdapter {
 			+ KEY_MOVIE_DIRECTOR + " string"
 			+ ");";
 	
-
 	private DatabaseHelper myDBHelper;
 	private SQLiteDatabase db;
 
@@ -120,31 +105,25 @@ public class MoviesDBAdapter {
 	}
 	
 	// Add a new set of values to the database.
-	public void addMovie(String [] strings, int[] ints, double[] doubles) {
+	public void addMovie(Movie movie) {
 		/*
-		 * strings[] {pic_Url, title, genre, movie rating, description, cast, director}
-		 * ints [] {watched, year, runtime}
 		 * double[] {tomato_rating, user_rating}
 		 */
 		openWriteable();
 		ContentValues newMovieValues = new ContentValues();
-		for (int i=0; i<strings.length; i++){
-			newMovieValues.put(STRING_KEYS[i], strings[i]);
-		}
-		for (int i=0; i<ints.length; i++) {
-			if (ints[i]>=0) {
-				newMovieValues.put(INTEGER_KEYS[i], ints[i]);
-			} else {
-				newMovieValues.putNull(INTEGER_KEYS[i]);
-			}
-		}
-		for (int i=0; i<doubles.length; i++) {
-			if (doubles[i]>=0) {
-				newMovieValues.put(REAL_KEYS[i], doubles[i]);
-			} else {
-				newMovieValues.putNull(REAL_KEYS[i]);
-			}
-		}
+		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
+		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
+		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());
+		newMovieValues.put(KEY_MOVIE_RATING, movie.getMpaa_rating());
+		newMovieValues.put(KEY_MOVIE_DESCRIPTION, movie.getDescription());
+		newMovieValues.put(KEY_MOVIE_CAST, movie.getCast());
+		newMovieValues.put(KEY_MOVIE_DIRECTOR, movie.getDirector());
+		newMovieValues.put(KEY_MOVIE_WATCHED, movie.getWatched());
+		newMovieValues.put(KEY_MOVIE_YEAR, movie.getYear());
+		newMovieValues.put(KEY_MOVIE_RUNTIME, movie.getRuntime());
+		newMovieValues.put(KEY_MOVIE_RT_RATING, movie.getRt_rating());
+		newMovieValues.put(KEY_MOVIE_USER_RATING, movie.getUser_rating());
+		
 		try {
 			db.insertOrThrow(DATABASE_TABLE, null, newMovieValues);
 		} catch (SQLiteException ex) {
@@ -186,7 +165,6 @@ public class MoviesDBAdapter {
 	// Return all data in the database.
 	public Cursor getAllMovies() {
 		openReadable();
-		String where = null;
 		Cursor c = db.query(DATABASE_TABLE, null, null, null, null, null, KEY_MOVIE_TITLE + " ASC");
 		if (c != null) {
 			c.moveToFirst();
@@ -210,25 +188,24 @@ public class MoviesDBAdapter {
 	}
 	
 	// Change an existing row to be equal to new data.
-	public boolean updateMovie(int rowId, String [] strings, int[] ints, double[] doubles) {
-		/**
-		 * strings[] {pic_Url, title, genre, description, cast, director}
-		 * ints [] {watched, year, runtime}
-		 * double[] {tomato_rating, user_rating}
-		 */
+	public boolean updateMovie(int rowId, Movie movie) {
 		int numChanged;
 		openWriteable();
 		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newMovieValues = new ContentValues();
-		for (int i=0; i<strings.length; i++){
-			newMovieValues.put(STRING_KEYS[i], strings[i]);
-		}
-		for (int i=0; i<ints.length; i++) {
-			newMovieValues.put(INTEGER_KEYS[i], ints[i]);
-		}
-		for (int i=0; i<doubles.length; i++) {
-			newMovieValues.put(REAL_KEYS[i], doubles[i]);
-		}
+		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
+		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
+		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());
+		newMovieValues.put(KEY_MOVIE_RATING, movie.getMpaa_rating());
+		newMovieValues.put(KEY_MOVIE_DESCRIPTION, movie.getDescription());
+		newMovieValues.put(KEY_MOVIE_CAST, movie.getCast());
+		newMovieValues.put(KEY_MOVIE_DIRECTOR, movie.getDirector());
+		newMovieValues.put(KEY_MOVIE_WATCHED, movie.getWatched());
+		newMovieValues.put(KEY_MOVIE_YEAR, movie.getYear());
+		newMovieValues.put(KEY_MOVIE_RUNTIME, movie.getRuntime());
+		newMovieValues.put(KEY_MOVIE_RT_RATING, movie.getRt_rating());
+		newMovieValues.put(KEY_MOVIE_USER_RATING, movie.getUser_rating());
+	
 		try {
 			numChanged = db.update(DATABASE_TABLE, newMovieValues, where, null);
 		} catch (SQLiteException ex) {

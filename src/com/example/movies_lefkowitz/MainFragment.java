@@ -1,6 +1,22 @@
+/*
+ * TODO: 
+ * 1. Do the post execute in internet search
+ * 2. Details fragment
+ * 3. Context menus
+ * 4. Scale thumbnails to fit imageviews
+ * 			http://stackoverflow.com/questions/4837715/how-to-resize-a-bitmap-in-android
+ * 			http://stackoverflow.com/questions/14546922/android-bitmap-resize
+ * 5. Set actionbar even if menu key on device
+ * 6. Side by side fragments of movies and details
+ * 
+ * 
+ */
+
 package com.example.movies_lefkowitz;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -58,6 +74,7 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.fragment_main, container, false);
+
 		openDB();
 		populateListViewFromDB();
 		return mRootView;
@@ -93,7 +110,6 @@ public class MainFragment extends Fragment {
 				public void onClick(DialogInterface arg0, int arg1) {
 					Intent editActivityIntent = new Intent(getActivity(),
 							Add_Edit_Activity.class);
-					setTargetFragment(MainFragment.this, REQUEST_MANUAL);
 					startActivityForResult(editActivityIntent, REQUEST_MANUAL);
 				}
 			});
@@ -131,11 +147,9 @@ public class MainFragment extends Fragment {
 		mAdapter = new MyCursorAdapter(getActivity(), mMovieCursor);
 		mListview.setAdapter(mAdapter);
 		mListview.setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-
 			}
 		});
 		registerForContextMenu(mListview);
@@ -145,17 +159,11 @@ public class MainFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
 		if (resultCode != Activity.RESULT_OK) {
-			Toast.makeText( 
-				 	getActivity(), 
-				 	"Some sort of error", 
-				 	Toast.LENGTH_SHORT)
-				 .show();
 			return;
 		}
 		if (requestCode == REQUEST_MANUAL) {
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
-			
 		}
 	}
 	
@@ -227,14 +235,9 @@ public class MainFragment extends Fragment {
 		Bitmap bitmap;
 
 		@Override
-		protected Bitmap doInBackground(String... args) {
-			try {
-				bitmap = BitmapFactory.decodeStream((InputStream) new URL(
-						args[0]).getContent());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return bitmap;
+		protected Bitmap doInBackground(String... urls) {
+			Bitmap image = downloadImage(urls[0]);
+			return image;
 		}
 
 		@Override
@@ -242,6 +245,39 @@ public class MainFragment extends Fragment {
 			if (image != null) {
 				mThumbnailIV.setImageBitmap(image);
 			}
+		}
+
+		private Bitmap downloadImage(String urlString) {
+			URL url;
+			try {
+				url = new URL(urlString);
+				HttpURLConnection httpCon = (HttpURLConnection) url
+						.openConnection();
+
+				InputStream is = httpCon.getInputStream();
+				int fileLength = httpCon.getContentLength();
+
+				ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+				int nRead = 0;
+				int totalBytesRead = 0;
+				byte[] data = new byte[2048];
+
+				// Read the image bytes in chunks of 2048 bytes
+				while ((nRead = is.read(data, 0, data.length)) != -1) {
+					buffer.write(data, 0, nRead);
+					totalBytesRead += nRead;
+				}
+
+				buffer.flush();
+				byte[] image = buffer.toByteArray();
+
+				Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0,
+						image.length);
+				return bitmap;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	}
 }
