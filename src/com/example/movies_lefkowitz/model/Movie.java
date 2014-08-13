@@ -2,6 +2,7 @@ package com.example.movies_lefkowitz.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.Context;
 
@@ -10,8 +11,8 @@ import com.example.movies_lefkowitz.R;
 public class Movie {
 	
 	/* All Ratings */
-	private ArrayList <String> all_ratings = new ArrayList<String>(); 
-	private ArrayList <String> all_genres = new ArrayList<String>();
+	private List <String> all_ratings = new ArrayList<String>(); 
+	private List <String> all_genres = new ArrayList<String>();
 	
 	/* Movie fields */
 	private String pic = "";  
@@ -33,9 +34,9 @@ public class Movie {
 	public Movie(Context context, String title) {
 		super();
 		this.title = title;
-		this.all_ratings = (ArrayList<String>) Arrays.asList(
+		this.all_ratings = Arrays.asList(
 				context.getResources().getStringArray(R.array.ratings));
-		this.all_genres = (ArrayList<String>) Arrays.asList(
+		this.all_genres = Arrays.asList(
 				context.getResources().getStringArray(R.array.genres));
 	}
 	

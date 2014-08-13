@@ -29,6 +29,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class Add_Edit_Activity extends ActionBarActivity {
@@ -249,49 +250,46 @@ public class Add_Edit_Activity extends ActionBarActivity {
 							 .show();
 						return;
 					}
+					Movie movie = new Movie(getActivity(), title);
 					// get watched
 					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-					int watched = watchedCB.isChecked() ? 1 : 0;
+					movie.setWatched(watchedCB.isChecked() ? 1 : 0);
 					// get pic URL
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
-					String pic = null;
+					String pic = "";
 					if (mValidUrl) { // ensure that saving a valid url
 						pic = picEditText.getText().toString().trim();
 					}
+					movie.setPic(pic);
 					// get year
 					EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);
 					String yearText = yearEditText.getText().toString().trim();
-					int year = (yearText.length()>0) ? Integer.parseInt(yearText) : -1;
+					movie.setYear((yearText.length()>0) ? Integer.parseInt(yearText) : 0);
 					// get genre
-					String genre = mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre; //change to null?
-					// get rating
-					String rating = mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating;
+					movie.setGenre(mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre); //change to null?
+					// get mpaa rating
+					movie.setMpaa_rating(mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating);
 					// get runtime
 					EditText runtimeEditText = (EditText) mRootView.findViewById(R.id.add_edit_runtime);
 					String runtimeText = runtimeEditText.getText().toString().trim();
-					int runtime = (runtimeText.length()>0) ? Integer.parseInt(runtimeText) : -1;
+					movie.setRuntime((runtimeText.length()>0) ? Integer.parseInt(runtimeText) : 0);
 					// get description
 					EditText dscrptnEditText = (EditText) mRootView.findViewById(R.id.add_edit_description);
-					String description = dscrptnEditText.getText().toString().trim();
+					movie.setDescription(dscrptnEditText.getText().toString().trim());
 					// get User Rating
-					double userRating = (!mHasRated && mMyRating==0) ? -1 : mMyRating;
+					movie.setUser_rating((!mHasRated && mMyRating==0) ? 0 : mMyRating);
 					// get cast
 					EditText castEditText = (EditText) mRootView.findViewById(R.id.add_edit_cast);
-					String cast = castEditText.getText().toString().trim();
+					movie.setCast(castEditText.getText().toString().trim());
 					// get director
 					EditText dirEditText = (EditText) mRootView.findViewById(R.id.add_edit_director);
-					String director = dirEditText.getText().toString().trim();
+					movie.setDirector(dirEditText.getText().toString().trim());
 					// Tomato rating
-					double rtRating = -1;
-					
-					
-					String [] movieStrings =  {pic, title, genre, rating, description, cast, director};
-					int[] movieInts = {watched, year, runtime};
-					double[] movieDoubles = {rtRating, userRating};
+					movie.setRt_rating(0);
 					
 					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
-					db.addMovie(movieStrings, movieInts, movieDoubles);
+					db.addMovie(movie);
 					getActivity().setResult(RESULT_OK);
 					getActivity().finish();
 				}
