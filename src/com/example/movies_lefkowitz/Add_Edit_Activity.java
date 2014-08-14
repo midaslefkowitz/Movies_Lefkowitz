@@ -127,13 +127,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private void setGenreTV() {
 			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
 			if (mGenreArray != null && mGenreArray.size() > 0) {
-				StringBuilder sb = new StringBuilder();
-				mGenre = "";
-				for (int i = 0, len = mGenreArray.size(); i < len; i++) {
-					sb.append(mGenreArray.get(i));
-					sb.append(", ");
-				}
-				mGenre = sb.substring(0, sb.length() - 2).toString();
+				mGenre = GenrePickerFragment.genreArrayToString(mGenreArray);
 				mGenreTV.setText(mGenre);
 			} else {
 				mGenre = getString(R.string.add_edit_genre);
@@ -253,7 +247,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					Movie movie = new Movie(getActivity(), title);
 					// get watched
 					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-					movie.setWatched(watchedCB.isChecked() ? 1 : 0);
+					movie.setWatched(watchedCB.isChecked() ? movie.WATCHED : movie.UNWATCHED);
 					// get pic URL
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);

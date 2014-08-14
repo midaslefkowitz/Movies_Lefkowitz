@@ -10,6 +10,10 @@ import com.example.movies_lefkowitz.R;
 
 public class Movie {
 	
+	/* Constants */
+	public static int UNWATCHED = 0;
+	public static int WATCHED = 1;
+	
 	/* All Ratings */
 	private List <String> all_ratings = new ArrayList<String>(); 
 	private List <String> all_genres = new ArrayList<String>();
@@ -23,14 +27,15 @@ public class Movie {
 	private String cast = ""; 
 	private String director = "";
 	
-	private int watched = 0; 
+	private int rottenID = 0;
+	private int watched = UNWATCHED; 
 	private int year = 0;
 	private int runtime = 0;
 	
 	private double rt_rating = 0;
 	private double user_rating = 0;
 	
-	/* Constructors */
+	/* Constructor */
 	public Movie(Context context, String title) {
 		super();
 		this.title = title;
@@ -40,8 +45,15 @@ public class Movie {
 				context.getResources().getStringArray(R.array.genres));
 	}
 	
-	
 	/* Getters and Setters */
+	public int getRottenID() {
+		return rottenID;
+	}
+
+	public void setRottenID(int rottenID) {
+		this.rottenID = rottenID;
+	}	
+	
 	public String getPic() {
 		return pic;
 	}
@@ -101,7 +113,7 @@ public class Movie {
 	}
 
 	public void setWatched(int watched) {
-		if (watched == 0 || watched == 1){
+		if (watched == UNWATCHED || watched == WATCHED){
 			this.watched = watched;			
 		}
 	}

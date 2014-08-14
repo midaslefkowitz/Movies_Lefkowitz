@@ -3,11 +3,13 @@
  * 1. Do the post execute in internet search
  * 2. Details fragment
  * 3. Context menus
- * 4. Scale thumbnails to fit imageviews
+ * 4. Change add movie dialog to be a fragment
+ * 5. Change add_movie icon to show always
+ * 6. Scale thumbnails to fit imageviews
  * 			http://stackoverflow.com/questions/4837715/how-to-resize-a-bitmap-in-android
  * 			http://stackoverflow.com/questions/14546922/android-bitmap-resize
- * 5. Set actionbar even if menu key on device
- * 6. Side by side fragments of movies and details
+ * 7. Set actionbar even if menu key on device
+ * 8. Side by side fragments of movies and details
  * 
  * 
  */
@@ -47,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.movies_lefkowitz.Add_Edit_Activity.PlaceholderFragment;
+import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class MainFragment extends Fragment {
@@ -161,7 +164,7 @@ public class MainFragment extends Fragment {
 		if (resultCode != Activity.RESULT_OK) {
 			return;
 		}
-		if (requestCode == REQUEST_MANUAL) {
+		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH) { // TODO: Change this to also check if a movie was added. Can be part of the bundle on activity result
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
 		}
@@ -191,25 +194,25 @@ public class MainFragment extends Fragment {
 					.findViewById(R.id.list_item_my_rating);
 
 			mThumbnailIV.setImageResource(R.drawable.thumb);
-			new ImageLoader().execute(cursor.getString(cursor
+			
+			// new ImageLoader().execute(cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)));
+			new ImageLoader(getActivity(), mThumbnailIV).execute(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)));
 			
 			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
 			if (cursor.getInt(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED)) == 0) {
+					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED)) == Movie.UNWATCHED) {
 				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
 			} else {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
 			titleTV.setText(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE)));
+			
 			/* Displayed year depends on if database has a year */
 			int year = cursor.getInt(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR));
-			if (year <= 0) {
-				yearTV.setText("");
-			} else {
-				yearTV.setText(Integer.toString(year));
-			}
+			yearTV.setText((year <= 0) ? "" : Integer.toString(year));
+			
 			/* Display description */
 			descriptionTV.setText(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DESCRIPTION)));
@@ -231,6 +234,7 @@ public class MainFragment extends Fragment {
 		}
 	}
 
+	/*
 	private class ImageLoader extends AsyncTask<String, String, Bitmap> {
 		Bitmap bitmap;
 
@@ -280,4 +284,5 @@ public class MainFragment extends Fragment {
 			return null;
 		}
 	}
+	*/
 }

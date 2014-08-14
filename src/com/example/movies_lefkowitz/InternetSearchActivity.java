@@ -1,12 +1,25 @@
 package com.example.movies_lefkowitz;
 
+// TODO: Click listener for movie
+// TODO: ProgressDialog
+// TODO: Save image to disk so that doesnt need to reload thumbnail
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +34,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.movies_lefkowitz.model.Movie;
+import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class InternetSearchActivity extends ActionBarActivity {
 
@@ -53,7 +72,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-  
+
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
@@ -61,8 +80,10 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 		View mRootView;
 		private ListView mListview;
-		private ArrayAdapter<String> mMoviesAdapter;
-		
+		private ArrayAdapter<Movie> mMoviesAdapter;
+
+		// private Dialog progressDialog;
+
 		public PlaceholderFragment() {
 		}
 
@@ -71,122 +92,381 @@ public class InternetSearchActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_internet_search,
 					container, false);
-			mListview = (ListView) mRootView.findViewById(R.id.internet_search_listView);
+			mListview = (ListView) mRootView
+					.findViewById(R.id.internet_search_listView);
 			setSearchClickHandler();
 			return mRootView;
 		}
 
 		private void setSearchClickHandler() {
-			Button search = (Button) mRootView.findViewById(R.id.internet_search_button);
+			Button search = (Button) mRootView
+					.findViewById(R.id.internet_search_button);
 			search.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					String userInput = getUserInput();
 					getRottenTomatoJSON(userInput);
-					//populateLVfromJSON();
-					
 				}
 			});
 		}
 
 		private String getUserInput() {
-			EditText inputET = (EditText) mRootView.findViewById(R.id.internet_search_user_input);
+			EditText inputET = (EditText) mRootView
+					.findViewById(R.id.internet_search_user_input);
 			return inputET.getText().toString();
 		}
-		
+
 		private void getRottenTomatoJSON(String input) {
-			GetMovieTask movies = new GetMovieTask();
+			GetMoviesTask movies = new GetMoviesTask(getActivity());
 			movies.execute(input);
 		}
-		
-		private class GetMovieTask extends AsyncTask <String, Void, String> {
-            private final String LOG_TAG = GetMovieTask.class.getSimpleName();
-            private final String MOVIES_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?";
-            private final String API_PARAM = "apikey";
-            private final String MY_API = "smbffqgh98ztd8vq2b4b394a";
-            private final String QUERY_PARAM = "q";
-            private final String PAGE_LIMIT_PARAM = "page_limit";
-            private final String NUM_MOVIES = "50";
 
-    		@Override
-            protected String doInBackground(String... params) {
-                // These two need to be declared outside the try/catch
-                // so that they can be closed in the finally block.
-                HttpURLConnection urlConnection = null;
-                BufferedReader reader = null;
+		private class GetMoviesTask extends
+				AsyncTask<String, Void, List<Movie>> {
 
-                // Will contain the raw JSON response as a string.
-                String moviesJsonStr = null;
+			/* Constants */
+			private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+			private final String MOVIE_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
+			private final String MOVIES_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?";
+			private final String PAGE_LIMIT_PARAM = "page_limit";
+			private final String NUM_MOVIES = "50";
+			private final String API_PARAM = "apikey";
+			private final String MY_API = "smbffqgh98ztd8vq2b4b394a";
+			private final String QUERY_PARAM = "q";
 
-                try {
-                    // Construct the URL for the rotten tomato query
-                	Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                				.appendQueryParameter(API_PARAM, MY_API)
-                				.appendQueryParameter(QUERY_PARAM, params[0])
-                				.appendQueryParameter(PAGE_LIMIT_PARAM, NUM_MOVIES)
-                				.build();
-                				
-                	URL url = new URL(builtUri.toString());
+			/* Fields */
+			private Activity activity;
 
-                    // Create the request to Rotten Tomatoes, and open the connection
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
+			/* Constructor to get Activity */
+			public GetMoviesTask(Activity activity) {
+				this.activity = activity;
+			}
 
-                    // Read the input stream into a String
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
-                    if (inputStream == null) {
-                        // Nothing to do.
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
+			@Override
+			protected List<Movie> doInBackground(String... params) {
+				// Get URL for query
+				URL url = getMoviesURL(params[0]);
+				// go to url and get JSON
+				String moviesJSON = getJSONString(url);
+				// get movie list from moviesjson
+				return parseJSON(moviesJSON);
+			}
 
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line + "\n");
-                    }
+			private String getJSONString(URL url) {
+				// These two need to be declared outside the try/catch
+				// so that they can be closed in the finally block.
+				HttpURLConnection urlConnection = null;
+				BufferedReader reader = null;
 
-                    if (buffer.length() == 0) {
-                        // Stream was empty.  No point in parsing.
-                        return null;
-                    }
-                    moviesJsonStr = buffer.toString();
-                } catch (IOException e)  {
-                    Log.e(LOG_TAG, "Error ", e);
-                    // If the code didn't successfully get the movie data, there's no point in attempting
-                    // to parse it.
-                    moviesJsonStr = null;
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e)  {
-                            Log.e(LOG_TAG, "Error closing stream", e);
-                        }
-                    }
-                }
-                if (moviesJsonStr != null) {
-                	return moviesJsonStr;
-                }
-                return null;
-            }
-    		
-    		/*
-    		@Override
-    		protected void onPostExecute(String result) {
-    			if(result != null) {
-    				mMoviesAdapter.clear();
-    		        for(String dayForecastStr : result) {
-    		        	mMoviesAdapter.add(dayForecastStr);
-    		        }
-    		    }
-    		}
-    		*/
-        }
-    }
-		
+				// Will contain the raw JSON response as a string.
+				String moviesJsonStr = null;
+
+				try {
+					// Create the request to Rotten Tomatoes,
+					// and open the connection
+					urlConnection = (HttpURLConnection) url.openConnection();
+					urlConnection.setRequestMethod("GET");
+					urlConnection.connect();
+
+					// Read the input stream into a String
+					InputStream inputStream = urlConnection.getInputStream();
+					StringBuffer buffer = new StringBuffer();
+					if (inputStream == null) {
+						// Nothing to do.
+						return null;
+					}
+					reader = new BufferedReader(new InputStreamReader(
+							inputStream));
+
+					String line;
+					while ((line = reader.readLine()) != null) {
+						buffer.append(line + "\n");
+					}
+
+					if (buffer.length() == 0) {
+						// Stream was empty. No point in parsing.
+						return null;
+					}
+					moviesJsonStr = buffer.toString();
+				} catch (IOException e) {
+					Log.e(LOG_TAG, "Error ", e);
+					// If the code didn't successfully get the movie data,
+					// there's no point in attempting
+					// to parse it.
+					moviesJsonStr = null;
+				} finally {
+					if (urlConnection != null) {
+						urlConnection.disconnect();
+					}
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (final IOException e) {
+							Log.e(LOG_TAG, "Error closing stream", e);
+						}
+					}
+				}
+				if (moviesJsonStr != null) {
+					return moviesJsonStr;
+				}
+				return null;
+			}
+
+			private URL getMovieURL(String param) {
+				// Construct the URL for the rotten tomato query
+				Uri builtUri = Uri.parse(MOVIE_BASE_URL + param + ".json?")
+						.buildUpon().appendQueryParameter(API_PARAM, MY_API)
+						.build();
+				URL url = null;
+
+				try {
+					url = new URL(builtUri.toString());
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				return url;
+			}
+
+			private URL getMoviesURL(String param) {
+
+				// Construct the URL for the rotten tomato query
+				Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+						.appendQueryParameter(API_PARAM, MY_API)
+						.appendQueryParameter(QUERY_PARAM, param)
+						.appendQueryParameter(PAGE_LIMIT_PARAM, NUM_MOVIES)
+						.build();
+				URL url = null;
+
+				try {
+					url = new URL(builtUri.toString());
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				return url;
+			}
+
+			private List<Movie> parseJSON(String jsonString) {
+				List<Movie> movies = new ArrayList<Movie>();
+
+				// Convert String to JSON array of movies
+				JSONArray movieArray = stringToJsonArray(jsonString, "movies");
+
+				// iterate over JsonArray and add each movie to movie array
+				for (int i = 0; i < movieArray.length(); i++) {
+					
+					JSONObject js;
+					String rottenId;
+					try {
+						// get movie from the list
+						js = (JSONObject) movieArray.get(i);
+						URL detailedMovieURL;
+						Movie movie = null;
+						
+						if (js.has("id")) { 
+							// if it has a rotten id then get the detailed version of the movie
+							rottenId = js.getString("id");
+							detailedMovieURL = getMovieURL(rottenId);
+							js = new JSONObject(getJSONString(detailedMovieURL));	
+						} else {
+							// if no id then no movie no point in parsing
+							return null; 
+						}
+						
+						if (js.has("title")) {
+							String title = js.getString("title");
+							movie = new Movie(activity, title);
+						}
+						
+						movie.setRottenID(Integer.parseInt(rottenId));
+						
+						if (js.has("year")) {
+							String year = js.getString("year");
+							movie.setYear(Integer.parseInt(year));
+						}
+											
+						if (js.has("posters")) {
+							JSONObject posters = js.getJSONObject("posters");
+							String pic = posters.getString("original").replace("tmb", "ori");
+							movie.setPic(pic);
+						}
+
+						if (js.has("synopsis")) {
+							String description = js.getString("synopsis");
+							movie.setDescription(description);
+						}
+
+						
+						if (js.has("ratings")) {
+							String rating = js.getJSONObject("ratings").getString("audience_score");
+							movie.setRt_rating((Double.parseDouble(rating))/10); 
+						}
+						
+						if (js.has("genres")) {
+							JSONArray genres = js.getJSONArray("genres");
+							ArrayList<String> genreArrayList = new ArrayList<String>();
+							for (int j=0; j<genres.length(); j++) {
+								genreArrayList.add(genres.getString(j));
+							}
+							String genre = GenrePickerFragment.genreArrayToString(genreArrayList);
+							movie.setGenre(genre);
+						}
+						
+						if (js.has("mpaa_rating")) {
+							String mpaa_rating = js.getString("mpaa_rating");
+							movie.setMpaa_rating(mpaa_rating);
+						}
+						
+						if (js.has("abridged_cast")) {
+							JSONArray actors = js.getJSONArray("abridged_cast");
+							StringBuilder sb = new StringBuilder();
+							for (int j = 0; j < actors.length(); j++) {
+								JSONObject actor = (JSONObject) actors.get(j);
+								if (actor.has("name")) {
+									sb.append(actor.get("name") + ", ");
+								}
+							}
+							if (sb.length() > 0) {
+								movie.setCast(sb.substring(0, sb.length() - 2).toString());
+							}
+						}
+						
+						if (js.has("abridged_directors")) {
+							JSONArray directors = js.getJSONArray("abridged_directors");
+							StringBuilder sb = new StringBuilder();
+							for (int j = 0; j < directors.length(); j++) {
+								JSONObject actor = (JSONObject) directors.get(j);
+								if (actor.has("name")) {
+									sb.append(actor.get("name") + ", ");
+								}
+							}
+							movie.setDirector(sb.substring(0, sb.length() - 2).toString());
+						}
+						
+						if (js.has("runtime")) {
+							String runtime = js.getString("runtime");
+							if (runtime.length() > 0) {
+								movie.setRuntime(Integer.parseInt(runtime));
+							}
+						}
+						
+						movie.setWatched(0);
+						movie.setUser_rating(0);
+						movies.add(movie);
+						
+					} catch (JSONException e) {
+						// some sort of json error no point in parsing
+						return null;
+					}
+				}
+				return movies;
+			}
+
+			private JSONArray stringToJsonArray(String jsonString, String key) {
+				JSONObject json;
+				try {
+					json = new JSONObject(jsonString);
+					return json.getJSONArray(key);
+				} catch (JSONException e) {
+					e.printStackTrace(); // TODO: Make a better catch statement
+				}
+				return null;
+			}
+
+			
+			@Override
+			protected void onPostExecute(List<Movie> movies) {
+				super.onPostExecute(movies);
+				
+				if(movies == null) {
+					Toast.makeText(activity, "Error during search movie", Toast.LENGTH_LONG).show();
+					return;
+				}
+				
+				mMoviesAdapter = new ArrayAdapter<Movie>(activity, -1, movies) {
+
+					@Override
+					public View getView(int position, View convertView, ViewGroup parent) {
+						Movie movie = getItem(position);
+						View movieView = convertView;
+						
+						if(movieView == null) {
+							movieView = activity.getLayoutInflater().inflate(R.layout.item_layout, null);
+							//Holder holder = new Holder(); //TODO: why need this
+							//movieView.setTag(holder);
+						}
+
+						//final Holder holder = (Holder)movieView.getTag();
+						//holder.setMovie(movie);
+
+						ImageView mThumbnailIV = (ImageView) movieView
+								.findViewById(R.id.list_item_thumb);
+						ImageView watchCheckIV = (ImageView) movieView
+								.findViewById(R.id.list_item_check);
+						TextView titleTV = (TextView) movieView
+								.findViewById(R.id.list_item_title);
+						TextView yearTV = (TextView) movieView
+								.findViewById(R.id.list_item_year);
+						TextView descriptionTV = (TextView) movieView
+								.findViewById(R.id.list_item_description);
+						TextView rt_ratingTV = (TextView) movieView
+								.findViewById(R.id.list_item_rt_rating);
+						TextView my_ratingTV = (TextView) movieView
+								.findViewById(R.id.list_item_my_rating);
+						
+						mThumbnailIV.setImageResource(R.drawable.thumb);
+						new ImageLoader(getActivity(), mThumbnailIV).execute(movie.getPic());
+						
+						/* Displayed checkmark image (green/grey) depends if user has seen the movie */
+						if (movie.getWatched() == movie.UNWATCHED) {
+							watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+						} else {
+							watchCheckIV.setImageResource(R.drawable.checkmark_green);
+						}
+						
+						/* Display title */
+						titleTV.setText(movie.getTitle());
+						
+						/* Displayed year depends on if movie has a year */
+						int year = movie.getYear();
+						yearTV.setText((year <= 0) ? "" : Integer.toString(year));
+
+						/* Display description */
+						descriptionTV.setText(movie.getDescription());
+						
+						/* Display Rotten Rating */
+						rt_ratingTV.setText(Double.toString(movie.getRt_rating() ) );
+						
+						/* Display User Rating */
+						my_ratingTV.setText(Double.toString(movie.getUser_rating() ) );
+						
+						/*
+						movieView.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								Intent editActivityIntent = new Intent(SearchMovieActivity.this, EditMovieActivity.class);
+								
+								
+								Movie movie = holder.getMovie();
+								
+								editActivityIntent.putExtra("isNew",false);
+								editActivityIntent.putExtra("title", movie.getTitle());
+								editActivityIntent.putExtra("description", movie.getDescription());
+								editActivityIntent.putExtra("year", movie.getYear());
+								editActivityIntent.putExtra("rottenId", movie.getRottenId());
+								editActivityIntent.putExtra("smallImage",  movie.getSmallImage());
+								editActivityIntent.putExtra("largeImage", movie.getLargeImage());
+								editActivityIntent.putExtra("rating", movie.getRating());
+								
+								startActivityForResult(editActivityIntent, SAVE_MOVIE_REQUEST_CODE);
+							}
+						});
+						*/
+						return movieView;
+					}
+				};		    		
+				mListview.setAdapter(mMoviesAdapter);
+			}
+		}
+	}
 }

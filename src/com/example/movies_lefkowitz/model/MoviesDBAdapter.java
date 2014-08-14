@@ -19,6 +19,7 @@ public class MoviesDBAdapter {
 	
 	// Column names
 	public static final String KEY_ROWID = "_id";
+	public static final String KEY_MOVIE_ROTTENID = "rotten_id";
 	public static final String KEY_MOVIE_PIC = "pic";
 	public static final String KEY_MOVIE_WATCHED = "watched";
 	public static final String KEY_MOVIE_TITLE = "movie_title";
@@ -34,25 +35,26 @@ public class MoviesDBAdapter {
 	
 	
 	public static final String[] ALL_KEYS = new String[] {
-		KEY_ROWID, KEY_MOVIE_PIC, KEY_MOVIE_WATCHED, KEY_MOVIE_TITLE, 
-		KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_RATING, 
+		KEY_ROWID, KEY_MOVIE_ROTTENID, KEY_MOVIE_PIC, KEY_MOVIE_WATCHED, 
+		KEY_MOVIE_TITLE, KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_RATING, 
 		KEY_MOVIE_RUNTIME, KEY_MOVIE_RT_RATING, KEY_MOVIE_USER_RATING,
 		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR};
 		
 	// Column numbers
 	public static final int COL_ROWID = 0;
-	public static final int COL_MOVIE_PIC = 1;
-	public static final int COL_MOVIE_WATCHED = 2;
-	public static final int COL_MOVIE_TITLE = 3;
-	public static final int COL_MOVIE_YEAR = 4;
-	public static final int COL_MOVIE_GENRE = 5;
-	public static final int COL_MOVIE_RATING = 6;
-	public static final int COL_MOVIE_RUNTIME = 7;
-	public static final int COL_MOVIE_RT_RATING = 8;
-	public static final int COL_MOVIE_USER_RATING = 9;
-	public static final int COL_MOVIE_DESCRIPTION = 10;
-	public static final int COL_MOVIE_CAST = 11;
-	public static final int COL_MOVIE_DIRECTOR = 12;
+	public static final int COL_MOVIE_ROTTENID = 1;
+	public static final int COL_MOVIE_PIC = 2;
+	public static final int COL_MOVIE_WATCHED = 3;
+	public static final int COL_MOVIE_TITLE = 4;
+	public static final int COL_MOVIE_YEAR = 5;
+	public static final int COL_MOVIE_GENRE = 6;
+	public static final int COL_MOVIE_RATING = 7;
+	public static final int COL_MOVIE_RUNTIME = 8;
+	public static final int COL_MOVIE_RT_RATING = 9;
+	public static final int COL_MOVIE_USER_RATING = 10;
+	public static final int COL_MOVIE_DESCRIPTION = 11;
+	public static final int COL_MOVIE_CAST = 12;
+	public static final int COL_MOVIE_DIRECTOR = 13;
 	
 	// DB info
 	public static final String DATABASE_NAME = "MyMovies";
@@ -62,6 +64,7 @@ public class MoviesDBAdapter {
 	private static final String DATABASE_CREATE_SQL = 
 			"create table " + DATABASE_TABLE 
 			+ " (" + KEY_ROWID + " integer primary key autoincrement, "
+			+ KEY_MOVIE_ROTTENID + " integer, "
 			+ KEY_MOVIE_PIC + " string, "
 			+ KEY_MOVIE_WATCHED + " integer, "
 			+ KEY_MOVIE_TITLE + " text, "
@@ -111,6 +114,7 @@ public class MoviesDBAdapter {
 		 */
 		openWriteable();
 		ContentValues newMovieValues = new ContentValues();
+		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
 		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
 		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());
@@ -193,6 +197,7 @@ public class MoviesDBAdapter {
 		openWriteable();
 		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newMovieValues = new ContentValues();
+		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
 		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
 		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());

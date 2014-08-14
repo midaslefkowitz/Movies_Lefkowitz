@@ -16,6 +16,25 @@ public class GenrePickerFragment extends DialogFragment {
 	private String[] mGenresArray;
 	private boolean[] mSelected;
 
+	public static String genreArrayToString (ArrayList<String> genres) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0, len = genres.size(); i < len; i++) {
+			sb.append(genres.get(i));
+			sb.append(", ");
+		}
+		return (sb.substring(0, sb.length() - 2).toString());
+	}
+	
+	public static ArrayList<String> genreStringToArray (String genres) {
+		ArrayList <String> genresList = new ArrayList<String>();
+		String[] result = genres.split(", ");
+		for (String genre : result) {
+			genresList.add(genre);
+		}
+		return genresList;
+	}
+	
+	
 	public static GenrePickerFragment newInstance(
 			ArrayList<String> selectedItems) {
 		Bundle args = new Bundle();
