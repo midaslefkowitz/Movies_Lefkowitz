@@ -1,10 +1,12 @@
 package com.example.movies_lefkowitz;
 
-import android.app.Activity;
+import java.lang.reflect.Field;
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -15,6 +17,16 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new MainFragment()).commit();
+		}
+		try {
+		    ViewConfiguration config = ViewConfiguration.get(MainActivity.this);
+		    Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+		    if (menuKeyField != null) {
+		        menuKeyField.setAccessible(true);
+		        menuKeyField.setBoolean(config, false);
+		    }
+		} catch (Exception e) {
+		    e.printStackTrace();
 		}
 	}
 	

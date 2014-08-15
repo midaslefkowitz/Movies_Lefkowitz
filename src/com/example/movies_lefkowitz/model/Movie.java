@@ -1,5 +1,6 @@
 package com.example.movies_lefkowitz.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,11 +9,13 @@ import android.content.Context;
 
 import com.example.movies_lefkowitz.R;
 
-public class Movie {
+public class Movie implements Serializable {
+	
 	
 	/* Constants */
-	public static int UNWATCHED = 0;
-	public static int WATCHED = 1;
+	public static final int UNWATCHED = 0;
+	public static final int WATCHED = 1;
+	private static final long serialVersionUID = 1L;
 	
 	/* All Ratings */
 	private List <String> all_ratings = new ArrayList<String>(); 

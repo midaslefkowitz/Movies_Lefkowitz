@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.movies_lefkowitz.model.Movie;
+import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class InternetSearchActivity extends ActionBarActivity {
@@ -372,7 +373,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 				return null;
 			}
 
-			
 			@Override
 			protected void onPostExecute(List<Movie> movies) {
 				super.onPostExecute(movies);
@@ -391,12 +391,12 @@ public class InternetSearchActivity extends ActionBarActivity {
 						
 						if(movieView == null) {
 							movieView = activity.getLayoutInflater().inflate(R.layout.item_layout, null);
-							//Holder holder = new Holder(); //TODO: why need this
-							//movieView.setTag(holder);
+							MovieHolder holder = new MovieHolder();  
+							movieView.setTag(holder);
 						}
 
-						//final Holder holder = (Holder)movieView.getTag();
-						//holder.setMovie(movie);
+						final MovieHolder holder = (MovieHolder)movieView.getTag();
+						holder.setMovie(movie);
 
 						ImageView mThumbnailIV = (ImageView) movieView
 								.findViewById(R.id.list_item_thumb);

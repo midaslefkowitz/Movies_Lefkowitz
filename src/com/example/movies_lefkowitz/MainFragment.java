@@ -1,6 +1,6 @@
 /*
  * TODO: 
- * 1. Do the post execute in internet search
+ * 1. Need to implement saving in onPause and loading in onResume 
  * 2. Details fragment
  * 3. Context menus
  * 4. Change add movie dialog to be a fragment
@@ -16,12 +16,6 @@
 
 package com.example.movies_lefkowitz;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -30,9 +24,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -46,9 +37,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.movies_lefkowitz.Add_Edit_Activity.PlaceholderFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
