@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -20,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,7 +42,6 @@ import android.widget.Toast;
 
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
-import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class InternetSearchActivity extends ActionBarActivity {
 
@@ -439,29 +439,20 @@ public class InternetSearchActivity extends ActionBarActivity {
 						/* Display User Rating */
 						my_ratingTV.setText(Double.toString(movie.getUser_rating() ) );
 						
-						/*
+						/* Add Click Listener */
 						movieView.setOnClickListener(new OnClickListener() {
 							
 							@Override
 							public void onClick(View v) {
-								Intent editActivityIntent = new Intent(SearchMovieActivity.this, EditMovieActivity.class);
-								
-								
+								Intent intent = new Intent(getActivity(), DetailsActivity.class);
 								Movie movie = holder.getMovie();
-								
-								editActivityIntent.putExtra("isNew",false);
-								editActivityIntent.putExtra("title", movie.getTitle());
-								editActivityIntent.putExtra("description", movie.getDescription());
-								editActivityIntent.putExtra("year", movie.getYear());
-								editActivityIntent.putExtra("rottenId", movie.getRottenId());
-								editActivityIntent.putExtra("smallImage",  movie.getSmallImage());
-								editActivityIntent.putExtra("largeImage", movie.getLargeImage());
-								editActivityIntent.putExtra("rating", movie.getRating());
-								
-								startActivityForResult(editActivityIntent, SAVE_MOVIE_REQUEST_CODE);
+								intent.putExtra("isNew",false);
+								intent.putExtra("movie", movie);
+								startActivity(intent);
+								//startActivityForResult(intent, SAVE_MOVIE_REQUEST_CODE);
 							}
 						});
-						*/
+						
 						return movieView;
 					}
 				};		    		
