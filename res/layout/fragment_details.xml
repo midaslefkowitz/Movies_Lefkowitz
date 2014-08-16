@@ -52,15 +52,6 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/detail_item_year"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:text="(1987)"
-                    android:textSize="17sp"
-                    android:color="#999" />
             </LinearLayout>
 
             <TextView

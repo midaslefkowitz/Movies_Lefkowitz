@@ -9,13 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.movies_lefkowitz.InternetSearchActivity$PlaceholderFragment" >
 
-    <ProgressBar
-        android:id="@+id/internet_search_progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="invisible" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +32,8 @@
     <ListView
         android:id="@+id/internet_search_listView"
         android:layout_width="match_parent"
-        android:layout_height="324dp" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/internet_search_cancel_button"

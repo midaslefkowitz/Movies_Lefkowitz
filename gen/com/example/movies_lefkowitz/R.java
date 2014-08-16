@@ -1096,8 +1096,8 @@ containing a value of this type.
         public static final int thumb=0x7f020063;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f050057;
-        public static final int action_add=0x7f050073;
+        public static final int RelativeLayout1=0x7f050056;
+        public static final int action_add=0x7f050070;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1109,7 +1109,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050072;
+        public static final int action_settings=0x7f05006f;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_edit_cancel=0x7f05004f;
         public static final int add_edit_cast=0x7f05004c;
@@ -1136,24 +1136,23 @@ containing a value of this type.
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f05003c;
         public static final int default_activity_button=0x7f050028;
-        public static final int detail_item_cast=0x7f050060;
+        public static final int detail_item_cast=0x7f05005f;
         public static final int detail_item_check=0x7f050051;
-        public static final int detail_item_description=0x7f05005e;
-        public static final int detail_item_directed_by=0x7f050061;
-        public static final int detail_item_director=0x7f050062;
-        public static final int detail_item_genre=0x7f050054;
-        public static final int detail_item_my_rating=0x7f05005a;
-        public static final int detail_item_my_rating_icon=0x7f05005b;
-        public static final int detail_item_rating=0x7f050055;
-        public static final int detail_item_rt_icon=0x7f050058;
-        public static final int detail_item_rt_rating=0x7f050059;
-        public static final int detail_item_runtime=0x7f050056;
-        public static final int detail_item_starring=0x7f05005f;
-        public static final int detail_item_textView1=0x7f05005c;
-        public static final int detail_item_textView2=0x7f05005d;
+        public static final int detail_item_description=0x7f05005d;
+        public static final int detail_item_directed_by=0x7f050060;
+        public static final int detail_item_director=0x7f050061;
+        public static final int detail_item_genre=0x7f050053;
+        public static final int detail_item_my_rating=0x7f050059;
+        public static final int detail_item_my_rating_icon=0x7f05005a;
+        public static final int detail_item_rating=0x7f050054;
+        public static final int detail_item_rt_icon=0x7f050057;
+        public static final int detail_item_rt_rating=0x7f050058;
+        public static final int detail_item_runtime=0x7f050055;
+        public static final int detail_item_starring=0x7f05005e;
+        public static final int detail_item_textView1=0x7f05005b;
+        public static final int detail_item_textView2=0x7f05005c;
         public static final int detail_item_thumb=0x7f050050;
         public static final int detail_item_title=0x7f050052;
-        public static final int detail_item_year=0x7f050053;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int dropdown=0x7f05000f;
@@ -1166,23 +1165,21 @@ containing a value of this type.
         public static final int icon=0x7f05002a;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
-        public static final int internet_search_button=0x7f050065;
-        public static final int internet_search_cancel_button=0x7f050067;
-        public static final int internet_search_listView=0x7f050066;
-        public static final int internet_search_progressBar=0x7f050063;
-        public static final int internet_search_user_input=0x7f050064;
+        public static final int internet_search_button=0x7f050063;
+        public static final int internet_search_cancel_button=0x7f050065;
+        public static final int internet_search_listView=0x7f050064;
+        public static final int internet_search_user_input=0x7f050062;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;
-        public static final int list_item_check=0x7f05006a;
-        public static final int list_item_description=0x7f05006d;
-        public static final int list_item_my_rating=0x7f050070;
-        public static final int list_item_my_rating_icon=0x7f050071;
-        public static final int list_item_rt_icon=0x7f05006e;
-        public static final int list_item_rt_rating=0x7f05006f;
-        public static final int list_item_thumb=0x7f050069;
-        public static final int list_item_title=0x7f05006b;
-        public static final int list_item_year=0x7f05006c;
-        public static final int main_movie_listview=0x7f050068;
+        public static final int list_item_check=0x7f050068;
+        public static final int list_item_description=0x7f05006a;
+        public static final int list_item_my_rating=0x7f05006d;
+        public static final int list_item_my_rating_icon=0x7f05006e;
+        public static final int list_item_rt_icon=0x7f05006b;
+        public static final int list_item_rt_rating=0x7f05006c;
+        public static final int list_item_thumb=0x7f050067;
+        public static final int list_item_title=0x7f050069;
+        public static final int main_movie_listview=0x7f050066;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
@@ -1591,6 +1588,7 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0b000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0b0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0b0022;
+        public static final int year_text=0x7f0b008d;
     }
     public static final class styleable {
         /**  ============================================ 

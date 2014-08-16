@@ -4,14 +4,12 @@
  * 2. Details fragment
  * 3. Context menus
  * 4. Change add movie dialog to be a fragment
+ *    When make the change also change back button navigation
  * 5. Change add_movie icon to show always
  * 6. Scale thumbnails to fit imageviews
  * 			http://stackoverflow.com/questions/4837715/how-to-resize-a-bitmap-in-android
  * 			http://stackoverflow.com/questions/14546922/android-bitmap-resize
- * 7. Set actionbar even if menu key on device
- * 8. Side by side fragments of movies and details
- * 
- * 
+ * 7. Side by side fragments of movies and details
  */
 
 package com.example.movies_lefkowitz;
@@ -26,6 +24,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView.BufferType;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -173,8 +173,6 @@ public class MainFragment extends Fragment {
 					.findViewById(R.id.list_item_check);
 			TextView titleTV = (TextView) movieView
 					.findViewById(R.id.list_item_title);
-			TextView yearTV = (TextView) movieView
-					.findViewById(R.id.list_item_year);
 			TextView descriptionTV = (TextView) movieView
 					.findViewById(R.id.list_item_description);
 			TextView rt_ratingTV = (TextView) movieView
@@ -195,12 +193,15 @@ public class MainFragment extends Fragment {
 			} else {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
-			titleTV.setText(cursor.getString(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE)));
 			
-			/* Displayed year depends on if database has a year */
-			int year = cursor.getInt(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR));
-			yearTV.setText((year <= 0) ? "" : Integer.toString(year));
+			/* Set the title textview with title and year span */
+			
+			titleTV.setMovementMethod(LinkMovementMethod.getInstance());
+			titleTV.setText(DetailFragment.getTitleYearSpan(
+						getActivity(), 
+						cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE)),
+						cursor.getInt(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR)) ), 
+					BufferType.SPANNABLE);
 			
 			/* Display description */
 			descriptionTV.setText(cursor.getString(cursor
@@ -222,56 +223,4 @@ public class MainFragment extends Fragment {
 			return itemView;
 		}
 	}
-
-	/*
-	private class ImageLoader extends AsyncTask<String, String, Bitmap> {
-		Bitmap bitmap;
-
-		@Override
-		protected Bitmap doInBackground(String... urls) {
-			Bitmap image = downloadImage(urls[0]);
-			return image;
-		}
-
-		@Override
-		protected void onPostExecute(Bitmap image) {
-			if (image != null) {
-				mThumbnailIV.setImageBitmap(image);
-			}
-		}
-
-		private Bitmap downloadImage(String urlString) {
-			URL url;
-			try {
-				url = new URL(urlString);
-				HttpURLConnection httpCon = (HttpURLConnection) url
-						.openConnection();
-
-				InputStream is = httpCon.getInputStream();
-				int fileLength = httpCon.getContentLength();
-
-				ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-				int nRead = 0;
-				int totalBytesRead = 0;
-				byte[] data = new byte[2048];
-
-				// Read the image bytes in chunks of 2048 bytes
-				while ((nRead = is.read(data, 0, data.length)) != -1) {
-					buffer.write(data, 0, nRead);
-					totalBytesRead += nRead;
-				}
-
-				buffer.flush();
-				byte[] image = buffer.toByteArray();
-
-				Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0,
-						image.length);
-				return bitmap;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-	*/
 }
