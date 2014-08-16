@@ -1,6 +1,5 @@
 package com.example.movies_lefkowitz;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +29,7 @@ public class DetailFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Get the message from the intent
+		// Get the movie from the intent
 	    Intent intent = getActivity().getIntent();
 	    mMovie = (Movie) intent.getSerializableExtra("movie");
 	}
@@ -47,15 +46,35 @@ public class DetailFragment extends Fragment {
 				.findViewById(R.id.detail_item_check);
 		TextView titleTV = (TextView) detailsView
 				.findViewById(R.id.detail_item_title);
-		TextView descriptionTV = (TextView) detailsView
-				.findViewById(R.id.detail_item_title);
+		TextView genreTV = (TextView) detailsView
+				.findViewById(R.id.detail_item_genre);
+		ImageView mpaaIV = (ImageView) detailsView
+				.findViewById(R.id.detail_item_mpaa);
+		TextView runtimeTV = (TextView) detailsView
+				.findViewById(R.id.detail_item_runtime);
 		TextView rt_ratingTV = (TextView) detailsView
 				.findViewById(R.id.detail_item_title);
 		TextView my_ratingTV = (TextView) detailsView
 				.findViewById(R.id.detail_item_title);
+		TextView descriptionTV = (TextView) detailsView
+				.findViewById(R.id.detail_item_title);
+		TextView castTV = (TextView) detailsView
+				.findViewById(R.id.detail_item_cast);
+		TextView directorTV = (TextView) detailsView
+				.findViewById(R.id.detail_item_director);
 
+		
+		/* Set placeholder thumbnail before try to download */
 		mThumbnailIV.setImageResource(R.drawable.thumb);
 		
+		/* Displayed checkmark image (green/grey) depends if user has seen the movie */
+		if (mMovie.getWatched() == Movie.UNWATCHED) {
+			watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+		} else {
+			watchCheckIV.setImageResource(R.drawable.checkmark_green);
+		}
+		
+		/* Set title and year TV */
 		titleTV.setMovementMethod(LinkMovementMethod.getInstance());
 		titleTV.setText(getTitleYearSpan(
 					getActivity(), 
@@ -63,6 +82,36 @@ public class DetailFragment extends Fragment {
 					mMovie.getYear() ), 
 				BufferType.SPANNABLE);
 		
+		/* Display genres */
+		genreTV.setText(mMovie.getGenre());
+		
+		/* Display relevant MPAA rating icon */
+		mpaaIV.setImageResource(RatingPickerFragment.getMPAAicon(mMovie.getMpaa_rating()));
+		
+		/* Display runtime */
+		int rt = mMovie.getRuntime();
+		int h = rt/60;
+		int m = rt%60;
+		String hours = ((h>0) ? h + " hrs " : "");
+		String runtime = hours + ((m>0) ? m + " mins" : "");
+		runtimeTV.setText(runtime);
+
+		/* Display Rotten Rating */
+		double rt_rating = mMovie.getRt_rating();
+		rt_ratingTV.setText(rt_rating>0 ? Double.toString(rt_rating) : "");
+		
+		/* Display User Rating */
+		double user_rating = mMovie.getUser_rating();
+		my_ratingTV.setText(user_rating>0 ? Double.toString(user_rating) : "");
+		
+		/* Display description */
+		descriptionTV.setText(mMovie.getDescription());
+		
+		/* Display the cast */
+		castTV.setText(mMovie.getCast());
+		
+		/* Display the director(s) */
+		directorTV.setText(mMovie.getDirector());
 		
 		return detailsView;
 	}

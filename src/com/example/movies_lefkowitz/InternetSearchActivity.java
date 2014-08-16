@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
@@ -404,8 +406,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 								.findViewById(R.id.list_item_check);
 						TextView titleTV = (TextView) movieView
 								.findViewById(R.id.list_item_title);
-						TextView yearTV = (TextView) movieView
-								.findViewById(R.id.list_item_year);
 						TextView descriptionTV = (TextView) movieView
 								.findViewById(R.id.list_item_description);
 						TextView rt_ratingTV = (TextView) movieView
@@ -424,12 +424,13 @@ public class InternetSearchActivity extends ActionBarActivity {
 						}
 						
 						/* Display title */
-						titleTV.setText(movie.getTitle());
+						titleTV.setMovementMethod(LinkMovementMethod.getInstance());
+						titleTV.setText(DetailFragment.getTitleYearSpan(
+									getActivity(), 
+									movie.getTitle(),
+									movie.getYear() ), 
+								BufferType.SPANNABLE);
 						
-						/* Displayed year depends on if movie has a year */
-						int year = movie.getYear();
-						yearTV.setText((year <= 0) ? "" : Integer.toString(year));
-
 						/* Display description */
 						descriptionTV.setText(movie.getDescription());
 						

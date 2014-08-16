@@ -10,6 +10,34 @@ import android.support.v4.app.DialogFragment;
 
 public class RatingPickerFragment extends DialogFragment {
 	
+	public static int getMPAAicon (String mpaa_rating) {
+		int resID = R.drawable.mpaa_ur;
+		
+		if (mpaa_rating.equalsIgnoreCase("G")) {
+			resID = R.drawable.mpaa_general;
+		}
+		
+		if (mpaa_rating.equalsIgnoreCase("PG")) {
+			resID = R.drawable.mpaa_pg;
+		}
+		
+		if (mpaa_rating.equalsIgnoreCase("PG-13")) {
+			resID = R.drawable.mpaa_pg13;
+		}
+		
+		if (mpaa_rating.equalsIgnoreCase("R")) {
+			resID = R.drawable.mpaa_restricted;
+		}
+		
+		if (mpaa_rating.equalsIgnoreCase("NC-17")) {
+			resID = R.drawable.mpaa_nc17;
+		}
+		
+		return resID;
+	}
+	
+	
+	
 	public static final String EXTRA_RATINGS = "com.example.www.movies_lefkowitz.ratings";
 	private String[] mRatingsArray;
 	private String mRating;

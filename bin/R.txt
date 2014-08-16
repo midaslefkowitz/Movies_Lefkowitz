@@ -246,9 +246,10 @@ int drawable mpaa_nc17 0x7f02005d
 int drawable mpaa_pg 0x7f02005e
 int drawable mpaa_pg13 0x7f02005f
 int drawable mpaa_restricted 0x7f020060
-int drawable rt_fresh 0x7f020061
-int drawable star_icon 0x7f020062
-int drawable thumb 0x7f020063
+int drawable mpaa_ur 0x7f020061
+int drawable rt_fresh 0x7f020062
+int drawable star_icon 0x7f020063
+int drawable thumb 0x7f020064
 int id RelativeLayout1 0x7f050056
 int id action_add 0x7f050070
 int id action_bar 0x7f05001c
@@ -295,9 +296,9 @@ int id detail_item_description 0x7f05005d
 int id detail_item_directed_by 0x7f050060
 int id detail_item_director 0x7f050061
 int id detail_item_genre 0x7f050053
+int id detail_item_mpaa 0x7f050054
 int id detail_item_my_rating 0x7f050059
 int id detail_item_my_rating_icon 0x7f05005a
-int id detail_item_rating 0x7f050054
 int id detail_item_rt_icon 0x7f050057
 int id detail_item_rt_rating 0x7f050058
 int id detail_item_runtime 0x7f050055

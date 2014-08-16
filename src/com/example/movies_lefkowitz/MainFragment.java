@@ -194,8 +194,7 @@ public class MainFragment extends Fragment {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
 			
-			/* Set the title textview with title and year span */
-			
+			/* Display the title textview with title and year span */
 			titleTV.setMovementMethod(LinkMovementMethod.getInstance());
 			titleTV.setText(DetailFragment.getTitleYearSpan(
 						getActivity(), 
@@ -207,9 +206,11 @@ public class MainFragment extends Fragment {
 			descriptionTV.setText(cursor.getString(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DESCRIPTION)));
 			
+			/* Display Rotten Rating  */
 			rt_ratingTV.setText(Double.toString(cursor.getDouble(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_RT_RATING))));
 			
+			/* Display User Rating */
 			my_ratingTV.setText(Double.toString(cursor.getInt(cursor
 					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_USER_RATING))));
 		}

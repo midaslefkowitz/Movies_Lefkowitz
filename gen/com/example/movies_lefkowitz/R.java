@@ -1091,9 +1091,10 @@ containing a value of this type.
         public static final int mpaa_pg=0x7f02005e;
         public static final int mpaa_pg13=0x7f02005f;
         public static final int mpaa_restricted=0x7f020060;
-        public static final int rt_fresh=0x7f020061;
-        public static final int star_icon=0x7f020062;
-        public static final int thumb=0x7f020063;
+        public static final int mpaa_ur=0x7f020061;
+        public static final int rt_fresh=0x7f020062;
+        public static final int star_icon=0x7f020063;
+        public static final int thumb=0x7f020064;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f050056;
@@ -1142,9 +1143,9 @@ containing a value of this type.
         public static final int detail_item_directed_by=0x7f050060;
         public static final int detail_item_director=0x7f050061;
         public static final int detail_item_genre=0x7f050053;
+        public static final int detail_item_mpaa=0x7f050054;
         public static final int detail_item_my_rating=0x7f050059;
         public static final int detail_item_my_rating_icon=0x7f05005a;
-        public static final int detail_item_rating=0x7f050054;
         public static final int detail_item_rt_icon=0x7f050057;
         public static final int detail_item_rt_rating=0x7f050058;
         public static final int detail_item_runtime=0x7f050055;
