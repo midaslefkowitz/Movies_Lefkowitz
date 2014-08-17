@@ -44,6 +44,16 @@ public class DetailFragment extends Fragment {
 	private View mDetailsView;
 	private Movie mMovie;
 	private ImageView mThumbnailIV;
+	private ImageView mWatchCheckIV;
+	private TextView mTitleTV;
+	private TextView mGenreTV;
+	private ImageView mMpaaIV;
+	private TextView mRuntimeTV;
+	private TextView mRt_ratingTV;
+	private TextView mMy_ratingTV;
+	private TextView mDescriptionTV;
+	private TextView mCastTV;
+	private TextView mDirectorTV;
 
 	public DetailFragment() {
 	}
@@ -55,35 +65,37 @@ public class DetailFragment extends Fragment {
 		Intent intent = getActivity().getIntent();
 		mMovie = (Movie) intent.getSerializableExtra("movie");
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mDetailsView = inflater.inflate(R.layout.fragment_details, container,
 				false);
-
+		
 		mThumbnailIV = (ImageView) mDetailsView
 				.findViewById(R.id.detail_item_thumb);
-		ImageView watchCheckIV = (ImageView) mDetailsView
+		mWatchCheckIV = (ImageView) mDetailsView
 				.findViewById(R.id.detail_item_check);
-		TextView titleTV = (TextView) mDetailsView
+		mTitleTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_title);
-		TextView genreTV = (TextView) mDetailsView
+		mGenreTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_genre);
-		ImageView mpaaIV = (ImageView) mDetailsView
+		mMpaaIV = (ImageView) mDetailsView
 				.findViewById(R.id.detail_item_mpaa);
-		TextView runtimeTV = (TextView) mDetailsView
+		mRuntimeTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_runtime);
-		TextView rt_ratingTV = (TextView) mDetailsView
+		mRt_ratingTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_title);
-		TextView my_ratingTV = (TextView) mDetailsView
+		mMy_ratingTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_title);
-		TextView descriptionTV = (TextView) mDetailsView
+		mDescriptionTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_title);
-		TextView castTV = (TextView) mDetailsView
+		mCastTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_cast);
-		TextView directorTV = (TextView) mDetailsView
+		/*
+		mDirectorTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_director);
+		*/
 
 		/* Set placeholder thumbnail before try to download */
 		mThumbnailIV.setImageResource(R.drawable.thumb);
@@ -93,22 +105,23 @@ public class DetailFragment extends Fragment {
 		 * movie
 		 */
 		if (mMovie.getWatched() == Movie.UNWATCHED) {
-			watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+			mWatchCheckIV.setImageResource(R.drawable.checkmark_grey);
 		} else {
-			watchCheckIV.setImageResource(R.drawable.checkmark_green);
+			mWatchCheckIV.setImageResource(R.drawable.checkmark_green);
 		}
 
 		/* Set title and year TV */
-		titleTV.setMovementMethod(LinkMovementMethod.getInstance());
-		titleTV.setText(
+		mTitleTV.setMovementMethod(LinkMovementMethod.getInstance());
+		mTitleTV.setText(
 				getTitleYearSpan(getActivity(), mMovie.getTitle(),
 						mMovie.getYear()), BufferType.SPANNABLE);
 
 		/* Display genres */
-		genreTV.setText(mMovie.getGenre());
+		String g = mMovie.getGenre();
+		mGenreTV.setText(g);
 
 		/* Display relevant MPAA rating icon */
-		mpaaIV.setImageResource(RatingPickerFragment.getMPAAicon(mMovie
+		mMpaaIV.setImageResource(RatingPickerFragment.getMPAAicon(mMovie
 				.getMpaa_rating()));
 
 		/* Display runtime */
@@ -117,26 +130,33 @@ public class DetailFragment extends Fragment {
 		int m = rt % 60;
 		String hours = ((h > 0) ? h + " hrs " : "");
 		String runtime = hours + ((m > 0) ? m + " mins" : "");
-		runtimeTV.setText(runtime);
+		mRuntimeTV.setText(runtime);
 
 		/* Display Rotten Rating */
 		double rt_rating = mMovie.getRt_rating();
-		rt_ratingTV.setText(rt_rating > 0 ? Double.toString(rt_rating) : "");
+		mRt_ratingTV.setText(rt_rating > 0 ? Double.toString(rt_rating) : "");
 
 		/* Display User Rating */
 		double user_rating = mMovie.getUser_rating();
-		my_ratingTV
+		mMy_ratingTV
 				.setText(user_rating > 0 ? Double.toString(user_rating) : "");
 
 		/* Display description */
-		descriptionTV.setText(mMovie.getDescription());
+		mDescriptionTV.setText(mMovie.getDescription());
 
 		/* Display the cast */
-		castTV.setText(mMovie.getCast());
+		mCastTV.setText(mMovie.getCast());
 
 		/* Display the director(s) */
-		directorTV.setText(mMovie.getDirector());
-
+		//mDirectorTV.setText(mMovie.getDirector());
+		
+		/*
+		if (mMovie.getRottenID()>0) {
+			GetMoviesTask movieTask = new GetMoviesTask(getActivity());
+			movieTask.execute(Integer.toString(mMovie.getRottenID() ) );
+		} 
+		*/
+		
 		return mDetailsView;
 	}
 
@@ -271,10 +291,31 @@ public class DetailFragment extends Fragment {
 		}
 
 		private Movie parseJSON(String jsonString) {
-
+			Movie movie = null;
 			try {
 				JSONObject js = new JSONObject(jsonString);
-				if (js.has("genres") && mMovie.getGenre().length() == 0) {
+				
+				if (js.has("title")) {
+					String title = js.getString("title");
+					movie = new Movie(activity, title);
+				}
+				
+				if (js.has("year")) {
+					String year = js.getString("year");
+					movie.setYear(Integer.parseInt(year));
+				}
+				
+				if (js.has("id")) {
+					movie.setRottenID(Integer.parseInt(js.getString("id") ) );
+				}
+				
+				if (js.has("posters")) {
+					JSONObject posters = js.getJSONObject("posters");
+					String pic = posters.getString("original").replace("tmb", "ori");
+					movie.setPic(pic);
+				}
+				
+				if (js.has("genres")) {
 					JSONArray genres = js.getJSONArray("genres");
 					ArrayList<String> genreArrayList = new ArrayList<String>();
 					for (int j = 0; j < genres.length(); j++) {
@@ -282,16 +323,27 @@ public class DetailFragment extends Fragment {
 					}
 					String genre = GenrePickerFragment
 							.genreArrayToString(genreArrayList);
-					mMovie.setGenre(genre);
+					movie.setGenre(genre);
 				}
 
-				if (js.has("mpaa_rating")
-						&& mMovie.getMpaa_rating().length() == 0) {
+				if (js.has("mpaa_rating")) {
 					String mpaa_rating = js.getString("mpaa_rating");
-					mMovie.setMpaa_rating(mpaa_rating);
+					movie.setMpaa_rating(mpaa_rating);
+				}
+				
+				if (js.has("ratings")) {
+					String rating = js.getJSONObject("ratings").getString("audience_score");
+					movie.setRt_rating((Double.parseDouble(rating))/10); 
+				}
+				
+				if (js.has("runtime")) {
+					String runtime = js.getString("runtime");
+					if (runtime.length() > 0) {
+						movie.setRuntime(Integer.parseInt(runtime));
+					}
 				}
 
-				if (js.has("abridged_cast") && mMovie.getCast().length() == 0) {
+				if (js.has("abridged_cast")) {
 					JSONArray actors = js.getJSONArray("abridged_cast");
 					StringBuilder sb = new StringBuilder();
 					for (int j = 0; j < actors.length(); j++) {
@@ -301,92 +353,132 @@ public class DetailFragment extends Fragment {
 						}
 					}
 					if (sb.length() > 0) {
-						mMovie.setCast(sb.substring(0, sb.length() - 2)
+						movie.setCast(sb.substring(0, sb.length() - 2)
 								.toString());
 					}
 				}
 
-				if (js.has("abridged_directors")
-						&& mMovie.getDirector().length() == 0) {
+				if (js.has("abridged_directors")) {
 					JSONArray directors = js.getJSONArray("abridged_directors");
 					StringBuilder sb = new StringBuilder();
 					for (int j = 0; j < directors.length(); j++) {
-						JSONObject actor = (JSONObject) directors.get(j);
-						if (actor.has("name")) {
-							sb.append(actor.get("name") + ", ");
+						JSONObject dir = (JSONObject) directors.get(j);
+						if (dir.has("name")) {
+							sb.append(dir.get("name") + ", ");
 						}
 					}
-					mMovie.setDirector(sb.substring(0, sb.length() - 2)
+					movie.setDirector(sb.substring(0, sb.length() - 2)
 							.toString());
 				}
-
-				if (js.has("runtime") && mMovie.getRuntime() == 0) {
-					String runtime = js.getString("runtime");
-					if (runtime.length() > 0) {
-						mMovie.setRuntime(Integer.parseInt(runtime));
-					}
-				}
-
+				
 			} catch (JSONException e) {
 				// some sort of json error no point in parsing
 				return null;
 			}
-			return mMovie;
+			return movie;
 		}
 
 		@Override
-		protected void onPostExecute(Movie movies) {
-			super.onPostExecute(movies);
-
-			if (movies == null) {
+		protected void onPostExecute(Movie movie) {
+			super.onPostExecute(movie);
+			
+			if (movie == null) {
 				Toast.makeText(activity, "Error loading movie details",
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-
-			ImageView mThumbnailIV = (ImageView) mDetailsView
-					.findViewById(R.id.list_item_thumb);
-			ImageView watchCheckIV = (ImageView) mDetailsView
-					.findViewById(R.id.list_item_check);
-			TextView titleTV = (TextView) mDetailsView
-					.findViewById(R.id.list_item_title);
-			TextView descriptionTV = (TextView) mDetailsView
-					.findViewById(R.id.list_item_description);
-			TextView rt_ratingTV = (TextView) mDetailsView
-					.findViewById(R.id.list_item_rt_rating);
-			TextView my_ratingTV = (TextView) mDetailsView
-					.findViewById(R.id.list_item_my_rating);
-
-			mThumbnailIV.setImageResource(R.drawable.thumb);
-			new ImageLoader(getActivity(), mThumbnailIV).execute(mMovie
-					.getPic());
+			
+			
+			/* Display Thumbnail to new one */
+			String oldPic = mMovie.getPic();
+			String newPic = movie.getPic();
+			if (!(oldPic.equalsIgnoreCase(newPic) ) ) { // have a new pic url 
+				new ImageLoader(getActivity(), mThumbnailIV).execute(newPic); // load it on ImageView
+			}
+				
 
 			/*
 			 * Displayed checkmark image (green/grey) depends if user has seen
 			 * the movie
 			 */
-			if (mMovie.getWatched() == Movie.UNWATCHED) {
-				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+			if (movie.getWatched() == Movie.UNWATCHED) {
+				mWatchCheckIV.setImageResource(R.drawable.checkmark_grey);
 			} else {
-				watchCheckIV.setImageResource(R.drawable.checkmark_green);
+				mWatchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
 
-			/* Display title */
-			titleTV.setMovementMethod(LinkMovementMethod.getInstance());
-			titleTV.setText(
-					DetailFragment.getTitleYearSpan(getActivity(),
-							mMovie.getTitle(), mMovie.getYear()),
-					BufferType.SPANNABLE);
-
+			/* Display title and year to new one */
+			String oldTitle = mMovie.getTitle();
+			String newTitle = movie.getTitle();
+			String oldYear = Integer.toString(mMovie.getYear());
+			String newYear = Integer.toString(movie.getYear());
+			if (!(oldTitle.equalsIgnoreCase(newTitle)) ||
+				!(oldYear.equalsIgnoreCase(newYear)) ) {
+				mTitleTV.setMovementMethod(LinkMovementMethod.getInstance());
+				mTitleTV.setText(
+						DetailFragment.getTitleYearSpan(getActivity(),
+								movie.getTitle(), movie.getYear()),
+						BufferType.SPANNABLE);
+			}
+			
 			/* Display description */
-			descriptionTV.setText(mMovie.getDescription());
+			String oldDescript = mMovie.getDescription();
+			String newDescript = movie.getDescription();
+			if (!(oldDescript.equalsIgnoreCase(newDescript))) {
+				mDescriptionTV.setText(movie.getDescription());
+			}
 
 			/* Display Rotten Rating */
-			rt_ratingTV.setText(Double.toString(mMovie.getRt_rating()));
+			double oldRottenRating = mMovie.getRt_rating();
+			double newRottenRating = movie.getRt_rating();
+			if (oldRottenRating != newRottenRating) {
+				mRt_ratingTV.setText(Double.toString(movie.getRt_rating()));
+			}
 
 			/* Display User Rating */
-			my_ratingTV.setText(Double.toString(mMovie.getUser_rating()));
+			mMy_ratingTV.setText(Double.toString(mMovie.getUser_rating()));
 
+			/* Display genres */
+			String oldGenres = mMovie.getGenre();
+			String newGenres = movie.getGenre();
+			if (!(oldGenres.equalsIgnoreCase(newGenres))) {
+				mGenreTV.setText(mMovie.getGenre());
+			}
+
+			/* Display relevant MPAA rating icon */
+			String oldMpaa = mMovie.getMpaa_rating();
+			String newMpaa  = movie.getMpaa_rating();
+			if (!(oldMpaa.equalsIgnoreCase(newMpaa))) {
+				mMpaaIV.setImageResource(RatingPickerFragment.getMPAAicon(movie
+						.getMpaa_rating()));
+			}
+
+			/* Display runtime */
+			int oldRt = mMovie.getRuntime();
+			int newRt = movie.getRuntime();
+			if (oldRt != newRt ) {
+				int h = newRt / 60;
+				int m = newRt % 60;
+				String hours = ((h > 0) ? h + " hrs " : "");
+				String runtime = hours + ((m > 0) ? m + " mins" : "");
+				mRuntimeTV.setText(runtime);
+			}
+
+			/* Display the cast */
+			String oldCast = mMovie.getCast();
+			String newCast = movie.getCast();
+			if (!(oldCast.equalsIgnoreCase(newCast))) {
+				mCastTV.setText(newCast);
+			}
+
+			/* Display the director(s) */
+			String oldDir = mMovie.getDirector();
+			String newDir = movie.getDirector();
+			if (!(oldDir.equalsIgnoreCase(newDir))) {
+				mDirectorTV.setText(newDir);
+			}
+			
+			mMovie = movie;
 		}
 	}
 }

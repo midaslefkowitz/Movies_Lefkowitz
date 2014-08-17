@@ -324,7 +324,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 						final MovieHolder holder = (MovieHolder)movieView.getTag();
 						holder.setMovie(movie);
 
-						ImageView mThumbnailIV = (ImageView) movieView
+						ImageView thumbnailIV = (ImageView) movieView
 								.findViewById(R.id.list_item_thumb);
 						ImageView watchCheckIV = (ImageView) movieView
 								.findViewById(R.id.list_item_check);
@@ -337,11 +337,11 @@ public class InternetSearchActivity extends ActionBarActivity {
 						TextView my_ratingTV = (TextView) movieView
 								.findViewById(R.id.list_item_my_rating);
 						
-						mThumbnailIV.setImageResource(R.drawable.thumb);
-						new ImageLoader(getActivity(), mThumbnailIV).execute(movie.getPic());
+						thumbnailIV.setImageResource(R.drawable.thumb);
+						new ImageLoader(getActivity(), thumbnailIV).execute(movie.getPic());
 						
 						/* Displayed checkmark image (green/grey) depends if user has seen the movie */
-						if (movie.getWatched() == movie.UNWATCHED) {
+						if (movie.getWatched() == Movie.UNWATCHED) {
 							watchCheckIV.setImageResource(R.drawable.checkmark_grey);
 						} else {
 							watchCheckIV.setImageResource(R.drawable.checkmark_green);
