@@ -129,6 +129,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 			/* Constants */
 			private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
+			private final String MOVIE_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
 			private final String MOVIES_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?";
 			private final String PAGE_LIMIT_PARAM = "page_limit";
 			private final String NUM_MOVIES = "50";
@@ -154,24 +155,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 				return parseJSON(moviesJSON);
 			}
 
-			private URL getMoviesURL(String param) {
-
-				// Construct the URL for the rotten tomato query
-				Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-						.appendQueryParameter(API_PARAM, MY_API)
-						.appendQueryParameter(QUERY_PARAM, param)
-						.appendQueryParameter(PAGE_LIMIT_PARAM, NUM_MOVIES)
-						.build();
-				URL url = null;
-
-				try {
-					url = new URL(builtUri.toString());
-				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
-				}
-				return url;
-			}
-			
 			private String getJSONString(URL url) {
 				// These two need to be declared outside the try/catch
 				// so that they can be closed in the finally block.
@@ -232,6 +215,39 @@ public class InternetSearchActivity extends ActionBarActivity {
 				return null;
 			}
 
+			private URL getMovieURL(String param) {
+				// Construct the URL for the rotten tomato query
+				Uri builtUri = Uri.parse(MOVIE_BASE_URL + param + ".json?")
+						.buildUpon().appendQueryParameter(API_PARAM, MY_API)
+						.build();
+				URL url = null;
+
+				try {
+					url = new URL(builtUri.toString());
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				return url;
+			}
+
+			private URL getMoviesURL(String param) {
+
+				// Construct the URL for the rotten tomato query
+				Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+						.appendQueryParameter(API_PARAM, MY_API)
+						.appendQueryParameter(QUERY_PARAM, param)
+						.appendQueryParameter(PAGE_LIMIT_PARAM, NUM_MOVIES)
+						.build();
+				URL url = null;
+
+				try {
+					url = new URL(builtUri.toString());
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				return url;
+			}
+
 			private List<Movie> parseJSON(String jsonString) {
 				List<Movie> movies = new ArrayList<Movie>();
 
@@ -242,20 +258,30 @@ public class InternetSearchActivity extends ActionBarActivity {
 				for (int i = 0; i < movieArray.length(); i++) {
 					
 					JSONObject js;
+					String rottenId;
 					try {
 						// get movie from the list
 						js = (JSONObject) movieArray.get(i);
+						URL detailedMovieURL;
 						Movie movie = null;
+						
+						if (js.has("id")) { 
+							// if it has a rotten id then get the detailed version of the movie
+							rottenId = js.getString("id");
+							detailedMovieURL = getMovieURL(rottenId);
+							js = new JSONObject(getJSONString(detailedMovieURL));	
+						} else {
+							// if no id then no movie no point in parsing
+							return null; 
+						}
 						
 						if (js.has("title")) {
 							String title = js.getString("title");
 							movie = new Movie(activity, title);
 						}
 						
-						if (js.has("id")) {
-							movie.setRottenID(Integer.parseInt(js.getString("id") ) );
-						}
-					
+						movie.setRottenID(Integer.parseInt(rottenId));
+						
 						if (js.has("year")) {
 							String year = js.getString("year");
 							movie.setYear(Integer.parseInt(year));
@@ -272,12 +298,62 @@ public class InternetSearchActivity extends ActionBarActivity {
 							movie.setDescription(description);
 						}
 
+						
 						if (js.has("ratings")) {
 							String rating = js.getJSONObject("ratings").getString("audience_score");
 							movie.setRt_rating((Double.parseDouble(rating))/10); 
 						}
-											
+						
+						if (js.has("genres")) {
+							JSONArray genres = js.getJSONArray("genres");
+							ArrayList<String> genreArrayList = new ArrayList<String>();
+							for (int j=0; j<genres.length(); j++) {
+								genreArrayList.add(genres.getString(j));
+							}
+							String genre = GenrePickerFragment.genreArrayToString(genreArrayList);
+							movie.setGenre(genre);
+						}
+						
+						if (js.has("mpaa_rating")) {
+							String mpaa_rating = js.getString("mpaa_rating");
+							movie.setMpaa_rating(mpaa_rating);
+						}
+						
+						if (js.has("abridged_cast")) {
+							JSONArray actors = js.getJSONArray("abridged_cast");
+							StringBuilder sb = new StringBuilder();
+							for (int j = 0; j < actors.length(); j++) {
+								JSONObject actor = (JSONObject) actors.get(j);
+								if (actor.has("name")) {
+									sb.append(actor.get("name") + ", ");
+								}
+							}
+							if (sb.length() > 0) {
+								movie.setCast(sb.substring(0, sb.length() - 2).toString());
+							}
+						}
+						
+						if (js.has("abridged_directors")) {
+							JSONArray directors = js.getJSONArray("abridged_directors");
+							StringBuilder sb = new StringBuilder();
+							for (int j = 0; j < directors.length(); j++) {
+								JSONObject actor = (JSONObject) directors.get(j);
+								if (actor.has("name")) {
+									sb.append(actor.get("name") + ", ");
+								}
+							}
+							movie.setDirector(sb.substring(0, sb.length() - 2).toString());
+						}
+						
+						if (js.has("runtime")) {
+							String runtime = js.getString("runtime");
+							if (runtime.length() > 0) {
+								movie.setRuntime(Integer.parseInt(runtime));
+							}
+						}
+						
 						movie.setWatched(0);
+						movie.setUser_rating(0);
 						movies.add(movie);
 						
 					} catch (JSONException e) {
@@ -359,12 +435,10 @@ public class InternetSearchActivity extends ActionBarActivity {
 						descriptionTV.setText(movie.getDescription());
 						
 						/* Display Rotten Rating */
-						double rt_rating = movie.getRt_rating();
-						rt_ratingTV.setText(rt_rating>0 ? Double.toString(rt_rating) : "");
+						rt_ratingTV.setText(Double.toString(movie.getRt_rating() ) );
 						
 						/* Display User Rating */
-						double user_rating = movie.getUser_rating();
-						my_ratingTV.setText(user_rating>0 ? Double.toString(user_rating) : "");
+						my_ratingTV.setText(Double.toString(movie.getUser_rating() ) );
 						
 						/* Add Click Listener */
 						movieView.setOnClickListener(new OnClickListener() {

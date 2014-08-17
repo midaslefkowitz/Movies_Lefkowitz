@@ -1,5 +1,8 @@
 // TODO: rework fragment flow depending on if came 
 // from internet search or mainfragment
+//
+
+// OLD
 
 package com.example.movies_lefkowitz;
 
@@ -85,21 +88,23 @@ public class DetailFragment extends Fragment {
 		mRuntimeTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_runtime);
 		mRt_ratingTV = (TextView) mDetailsView
-				.findViewById(R.id.detail_item_title);
+				.findViewById(R.id.detail_item_rt_rating);
 		mMy_ratingTV = (TextView) mDetailsView
-				.findViewById(R.id.detail_item_title);
+				.findViewById(R.id.detail_item_my_rating);
 		mDescriptionTV = (TextView) mDetailsView
-				.findViewById(R.id.detail_item_title);
+				.findViewById(R.id.detail_item_description);
 		mCastTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_cast);
-		/*
 		mDirectorTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_director);
-		*/
+
 
 		/* Set placeholder thumbnail before try to download */
 		mThumbnailIV.setImageResource(R.drawable.thumb);
 
+		/* Try to download the thumbnail */
+		new ImageLoader(getActivity(), mThumbnailIV).execute(mMovie.getPic());
+		
 		/*
 		 * Displayed checkmark image (green/grey) depends if user has seen the
 		 * movie
@@ -150,12 +155,10 @@ public class DetailFragment extends Fragment {
 		/* Display the director(s) */
 		//mDirectorTV.setText(mMovie.getDirector());
 		
-		/*
 		if (mMovie.getRottenID()>0) {
 			GetMoviesTask movieTask = new GetMoviesTask(getActivity());
 			movieTask.execute(Integer.toString(mMovie.getRottenID() ) );
 		} 
-		*/
 		
 		return mDetailsView;
 	}

@@ -70,10 +70,7 @@ public class Movie implements Serializable {
 	}
 
 	public void setGenre(String genre) {
-		if (this.all_genres.size() > 0 && // we were able to get array of genres
-			this.all_genres.contains(genre)) { // inputed genre is valid
-				this.genre = genre;
-		}
+		this.genre = genre;
 	}
 
 	public String getMpaa_rating() {
