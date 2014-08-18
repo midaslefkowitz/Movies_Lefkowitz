@@ -97,26 +97,26 @@ public class MainFragment extends Fragment {
 				}
 			});
 
-			builder.setNegativeButton("Manual", new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					Intent editActivityIntent = new Intent(getActivity(),
-							Add_Edit_Activity.class);
-					startActivityForResult(editActivityIntent, REQUEST_MANUAL);
-				}
-			});
-
-			builder.setNeutralButton("Cancel", new OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					return;
-				}
-			});
-
-			builder.create().show();
-			break;
+				builder.setNegativeButton("Manual", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						Intent editActivityIntent = new Intent(getActivity(),
+								Add_Edit_Activity.class);
+						startActivityForResult(editActivityIntent, REQUEST_MANUAL);
+					}
+				});
+	
+				builder.setNeutralButton("Cancel", new OnClickListener() {
+	
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						return;
+					}
+				});
+	
+				builder.create().show();
+				break;
 		case R.id.action_settings:
 			return true;
 		}
