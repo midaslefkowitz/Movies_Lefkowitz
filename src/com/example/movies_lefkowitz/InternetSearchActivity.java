@@ -1,6 +1,5 @@
 package com.example.movies_lefkowitz;
 
-// TODO: Click listener for movie
 // TODO: ProgressDialog
 // TODO: Save image to disk so that doesnt need to reload thumbnail
 
@@ -39,8 +38,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
@@ -84,6 +83,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 		View mRootView;
 		private ListView mListview;
 		private ArrayAdapter<Movie> mMoviesAdapter;
+		private static final int TARGET_HEIGHT = 120;
 
 		// private Dialog progressDialog;
 
@@ -136,6 +136,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			private final String API_PARAM = "apikey";
 			private final String MY_API = "smbffqgh98ztd8vq2b4b394a";
 			private final String QUERY_PARAM = "q";
+			
 
 			/* Fields */
 			private Activity activity;
@@ -414,8 +415,11 @@ public class InternetSearchActivity extends ActionBarActivity {
 								.findViewById(R.id.list_item_my_rating);
 						
 						thumbnailIV.setImageResource(R.drawable.thumb);
-						new ImageLoader(getActivity(), thumbnailIV).execute(movie.getPic());
-						
+						MainActivity.GetImage.download(movie.getPic(), 
+														activity, 
+														thumbnailIV, 
+														TARGET_HEIGHT);
+							
 						/* Displayed checkmark image (green/grey) depends if user has seen the movie */
 						if (movie.getWatched() == Movie.UNWATCHED) {
 							watchCheckIV.setImageResource(R.drawable.checkmark_grey);

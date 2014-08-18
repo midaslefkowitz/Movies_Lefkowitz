@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.ViewConfiguration;
 
 public class MainActivity extends ActionBarActivity {
+	public final static ImageDownloader GetImage = new ImageDownloader();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -33,10 +33,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView.BufferType;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
@@ -49,6 +49,7 @@ public class MainFragment extends Fragment {
 	private MyCursorAdapter mAdapter;
 	private View mRootView;
 	private ImageView mThumbnailIV;
+	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_SEARCH = 0;
 	protected static final int REQUEST_MANUAL = 1;
@@ -180,11 +181,14 @@ public class MainFragment extends Fragment {
 			TextView my_ratingTV = (TextView) movieView
 					.findViewById(R.id.list_item_my_rating);
 
+			/* Load the image to the thumbnail */
 			mThumbnailIV.setImageResource(R.drawable.thumb);
-			
-			// new ImageLoader().execute(cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)));
-			new ImageLoader(getActivity(), mThumbnailIV).execute(cursor.getString(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)));
+			MainActivity.GetImage.download(
+					cursor.getString(cursor
+						  .getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)), 
+					getActivity(), 
+					mThumbnailIV, 
+					TARGET_HEIGHT);
 			
 			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
 			if (cursor.getInt(cursor

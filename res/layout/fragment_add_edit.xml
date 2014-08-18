@@ -29,6 +29,8 @@
                     android:id="@+id/add_edit_thumb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="130dp"
                     android:src="@drawable/thumb" />
 
                <LinearLayout

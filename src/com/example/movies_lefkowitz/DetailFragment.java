@@ -44,6 +44,8 @@ import android.widget.Toast;
 import com.example.movies_lefkowitz.model.Movie;
 
 public class DetailFragment extends Fragment {
+	private static final int TARGET_HEIGHT = 140;
+	
 	private View mDetailsView;
 	private Movie mMovie;
 	private ImageView mThumbnailIV;
@@ -103,8 +105,11 @@ public class DetailFragment extends Fragment {
 		mThumbnailIV.setImageResource(R.drawable.thumb);
 
 		/* Try to download the thumbnail */
-		new ImageLoader(getActivity(), mThumbnailIV).execute(mMovie.getPic());
-		
+		MainActivity.GetImage.download(mMovie.getPic(), 
+				getActivity(), 
+				mThumbnailIV, 
+				TARGET_HEIGHT);
+	
 		/*
 		 * Displayed checkmark image (green/grey) depends if user has seen the
 		 * movie
@@ -153,7 +158,7 @@ public class DetailFragment extends Fragment {
 		mCastTV.setText(mMovie.getCast());
 
 		/* Display the director(s) */
-		//mDirectorTV.setText(mMovie.getDirector());
+		mDirectorTV.setText(mMovie.getDirector());
 		
 		if (mMovie.getRottenID()>0) {
 			GetMoviesTask movieTask = new GetMoviesTask(getActivity());
@@ -396,7 +401,10 @@ public class DetailFragment extends Fragment {
 			String oldPic = mMovie.getPic();
 			String newPic = movie.getPic();
 			if (!(oldPic.equalsIgnoreCase(newPic) ) ) { // have a new pic url 
-				new ImageLoader(getActivity(), mThumbnailIV).execute(newPic); // load it on ImageView
+				MainActivity.GetImage.download(newPic, 
+						getActivity(), 
+						mThumbnailIV, 
+						TARGET_HEIGHT);
 			}
 				
 
