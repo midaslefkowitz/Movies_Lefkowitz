@@ -1,7 +1,8 @@
 package com.example.movies_lefkowitz;
 
 // TODO: ProgressDialog
-// TODO: Save image to disk so that doesnt need to reload thumbnail
+// TODO: Cancel Button
+
 
 import java.io.BufferedReader;
 import java.io.IOException;

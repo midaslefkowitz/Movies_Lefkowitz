@@ -1,8 +1,5 @@
 // TODO: rework fragment flow depending on if came 
 // from internet search or mainfragment
-//
-
-// OLD
 
 package com.example.movies_lefkowitz;
 
@@ -323,6 +320,8 @@ public class DetailFragment extends Fragment {
 					movie.setPic(pic);
 				}
 				
+				movie.setWatched(mMovie.getWatched());
+				
 				if (js.has("genres")) {
 					JSONArray genres = js.getJSONArray("genres");
 					ArrayList<String> genreArrayList = new ArrayList<String>();
@@ -349,6 +348,11 @@ public class DetailFragment extends Fragment {
 					if (runtime.length() > 0) {
 						movie.setRuntime(Integer.parseInt(runtime));
 					}
+				}
+				
+				if (js.has("synopsis")) {
+					String description = js.getString("synopsis");
+					movie.setDescription(description);
 				}
 
 				if (js.has("abridged_cast")) {
@@ -396,7 +400,6 @@ public class DetailFragment extends Fragment {
 				return;
 			}
 			
-			
 			/* Display Thumbnail to new one */
 			String oldPic = mMovie.getPic();
 			String newPic = movie.getPic();
@@ -407,7 +410,6 @@ public class DetailFragment extends Fragment {
 						TARGET_HEIGHT);
 			}
 				
-
 			/*
 			 * Displayed checkmark image (green/grey) depends if user has seen
 			 * the movie
@@ -436,7 +438,7 @@ public class DetailFragment extends Fragment {
 			String oldDescript = mMovie.getDescription();
 			String newDescript = movie.getDescription();
 			if (!(oldDescript.equalsIgnoreCase(newDescript))) {
-				mDescriptionTV.setText(movie.getDescription());
+				mDescriptionTV.setText(newDescript);
 			}
 
 			/* Display Rotten Rating */
