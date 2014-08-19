@@ -128,8 +128,10 @@ public class DetailFragment extends Fragment {
 		mGenreTV.setText(g);
 
 		/* Display relevant MPAA rating icon */
-		mMpaaIV.setImageResource(RatingPickerFragment.getMPAAicon(mMovie
-				.getMpaa_rating()));
+		int mpaa_icon_reference = RatingPickerFragment.getMPAAicon(mMovie.getMpaa_rating());
+		if (mpaa_icon_reference>0) {
+			mMpaaIV.setImageResource(mpaa_icon_reference);
+		}
 
 		/* Display runtime */
 		int rt = mMovie.getRuntime();

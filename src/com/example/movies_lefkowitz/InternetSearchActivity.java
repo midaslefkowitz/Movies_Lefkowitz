@@ -452,7 +452,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 							public void onClick(View v) {
 								Intent intent = new Intent(getActivity(), DetailsActivity.class);
 								Movie movie = holder.getMovie();
-								intent.putExtra("isNew",false);
+								intent.putExtra("isNew",true);
 								intent.putExtra("movie", movie);
 								startActivity(intent);
 								//startActivityForResult(intent, SAVE_MOVIE_REQUEST_CODE);

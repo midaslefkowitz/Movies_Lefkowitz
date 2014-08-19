@@ -6,7 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView.BufferType;
 
+import com.example.movies_lefkowitz.DetailFragment;
+import com.example.movies_lefkowitz.MainActivity;
 import com.example.movies_lefkowitz.R;
 
 public class Movie implements Serializable {
@@ -19,7 +24,7 @@ public class Movie implements Serializable {
 	
 	/* All Ratings */
 	private List <String> all_ratings = new ArrayList<String>(); 
-	private List <String> all_genres = new ArrayList<String>();
+	//private List <String> all_genres = new ArrayList<String>();
 	
 	/* Movie fields */
 	private String pic = "";  
@@ -38,15 +43,47 @@ public class Movie implements Serializable {
 	private double rt_rating = 0;
 	private double user_rating = 0;
 	
-	/* Constructor */
+	/* Constructors */
 	public Movie(Context context, String title) {
 		super();
 		this.title = title;
 		this.all_ratings = Arrays.asList(
 				context.getResources().getStringArray(R.array.ratings));
-		this.all_genres = Arrays.asList(
-				context.getResources().getStringArray(R.array.genres));
 	}
+	
+	public Movie (Context context, Cursor cursor) {		
+		this.pic = cursor.getString(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC));  
+		this.title = cursor.getString(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE));
+		this.genre = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_GENRE));
+		this.mpaa_rating = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_MPAA));;
+		this.description = cursor.getString(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DESCRIPTION));
+		this.cast = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_CAST)); 
+		this.director = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DIRECTOR));
+		
+		this.rottenID = cursor.getInt(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_ROTTENID));
+		this.watched = cursor.getInt(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED));
+		this.year = cursor.getInt(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR));
+		this.runtime = cursor.getInt(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_RUNTIME));
+		
+		this.rt_rating = cursor.getDouble(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_RT_RATING));
+		this.user_rating = cursor.getDouble(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_USER_RATING));
+		
+		this.all_ratings = Arrays.asList(
+				context.getResources().getStringArray(R.array.ratings));
+
+	}
+	
+	
+	
 	
 	/* Getters and Setters */
 	public int getRottenID() {
@@ -78,6 +115,7 @@ public class Movie implements Serializable {
 	}
 
 	public void setMpaa_rating(String mpaa_rating) {
+		// sanity check, mpaa_rating is a valid rating
 		if (this.all_ratings.size() > 0 && // we were able to get array of ratings
 			this.all_ratings.contains(mpaa_rating)) { // inputed rating is valid
 				this.mpaa_rating = mpaa_rating;
@@ -113,6 +151,7 @@ public class Movie implements Serializable {
 	}
 
 	public void setWatched(int watched) {
+		// sanity check. movie is watched or unwatched
 		if (watched == UNWATCHED || watched == WATCHED){
 			this.watched = watched;			
 		}

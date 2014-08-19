@@ -25,7 +25,7 @@ public class MoviesDBAdapter {
 	public static final String KEY_MOVIE_TITLE = "movie_title";
 	public static final String KEY_MOVIE_YEAR = "year";
 	public static final String KEY_MOVIE_GENRE = "genre";
-	public static final String KEY_MOVIE_RATING = "rating";
+	public static final String KEY_MOVIE_MPAA = "mpaa_rating";
 	public static final String KEY_MOVIE_RUNTIME = "runtime";
 	public static final String KEY_MOVIE_RT_RATING = "rt_rating";
 	public static final String KEY_MOVIE_USER_RATING = "user_rating";
@@ -36,7 +36,7 @@ public class MoviesDBAdapter {
 	
 	public static final String[] ALL_KEYS = new String[] {
 		KEY_ROWID, KEY_MOVIE_ROTTENID, KEY_MOVIE_PIC, KEY_MOVIE_WATCHED, 
-		KEY_MOVIE_TITLE, KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_RATING, 
+		KEY_MOVIE_TITLE, KEY_MOVIE_YEAR, KEY_MOVIE_GENRE, KEY_MOVIE_MPAA, 
 		KEY_MOVIE_RUNTIME, KEY_MOVIE_RT_RATING, KEY_MOVIE_USER_RATING,
 		KEY_MOVIE_DESCRIPTION, KEY_MOVIE_CAST, KEY_MOVIE_DIRECTOR};
 		
@@ -48,7 +48,7 @@ public class MoviesDBAdapter {
 	public static final int COL_MOVIE_TITLE = 4;
 	public static final int COL_MOVIE_YEAR = 5;
 	public static final int COL_MOVIE_GENRE = 6;
-	public static final int COL_MOVIE_RATING = 7;
+	public static final int COL_MOVIE_MPAA = 7;
 	public static final int COL_MOVIE_RUNTIME = 8;
 	public static final int COL_MOVIE_RT_RATING = 9;
 	public static final int COL_MOVIE_USER_RATING = 10;
@@ -70,7 +70,7 @@ public class MoviesDBAdapter {
 			+ KEY_MOVIE_TITLE + " text, "
 			+ KEY_MOVIE_YEAR + " integer, "
 			+ KEY_MOVIE_GENRE + " text, "
-			+ KEY_MOVIE_RATING + " text, "
+			+ KEY_MOVIE_MPAA + " text, "
 			+ KEY_MOVIE_RUNTIME + " integer, "
 			+ KEY_MOVIE_RT_RATING  + " real, "
 			+ KEY_MOVIE_USER_RATING + " real, "
@@ -118,7 +118,7 @@ public class MoviesDBAdapter {
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
 		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
 		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());
-		newMovieValues.put(KEY_MOVIE_RATING, movie.getMpaa_rating());
+		newMovieValues.put(KEY_MOVIE_MPAA, movie.getMpaa_rating());
 		newMovieValues.put(KEY_MOVIE_DESCRIPTION, movie.getDescription());
 		newMovieValues.put(KEY_MOVIE_CAST, movie.getCast());
 		newMovieValues.put(KEY_MOVIE_DIRECTOR, movie.getDirector());
@@ -201,7 +201,7 @@ public class MoviesDBAdapter {
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
 		newMovieValues.put(KEY_MOVIE_TITLE, movie.getTitle());
 		newMovieValues.put(KEY_MOVIE_GENRE, movie.getGenre());
-		newMovieValues.put(KEY_MOVIE_RATING, movie.getMpaa_rating());
+		newMovieValues.put(KEY_MOVIE_MPAA, movie.getMpaa_rating());
 		newMovieValues.put(KEY_MOVIE_DESCRIPTION, movie.getDescription());
 		newMovieValues.put(KEY_MOVIE_CAST, movie.getCast());
 		newMovieValues.put(KEY_MOVIE_DIRECTOR, movie.getDirector());

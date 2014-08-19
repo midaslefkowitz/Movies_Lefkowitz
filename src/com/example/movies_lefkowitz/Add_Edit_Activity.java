@@ -84,8 +84,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private boolean mHasRated = false;
 		private double mMyRating;
 
-		public PlaceholderFragment() {
-		}
+		public PlaceholderFragment() {}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,

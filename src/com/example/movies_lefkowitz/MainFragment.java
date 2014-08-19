@@ -31,14 +31,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.example.movies_lefkowitz.model.Movie;
+import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class MainFragment extends Fragment {
@@ -49,11 +48,13 @@ public class MainFragment extends Fragment {
 	private MyCursorAdapter mAdapter;
 	private View mRootView;
 	private ImageView mThumbnailIV;
+	private MovieHolder holder;
+	
 	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_SEARCH = 0;
 	protected static final int REQUEST_MANUAL = 1;
-	
+
 	public MainFragment() {
 	}
 
@@ -62,7 +63,7 @@ public class MainFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -73,32 +74,33 @@ public class MainFragment extends Fragment {
 		return mRootView;
 	}
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.movies_main_fragment, menu);
-    }
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.movies_main_fragment, menu);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		switch (id) {
-			case R.id.action_add:
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Add Movie").setMessage(
-					"Would you like to add movie manually or from the internet?");
+		case R.id.action_add:
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Add Movie")
+					.setMessage(
+							"Would you like to add movie manually or from the internet?");
 
-				builder.setPositiveButton("Internet", new OnClickListener() {
+			builder.setPositiveButton("Internet", new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
-					Intent searchActivityIntent = new Intent(
-							getActivity(), InternetSearchActivity.class);
+					Intent searchActivityIntent = new Intent(getActivity(),
+							InternetSearchActivity.class);
 					startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
 				}
 			});
 
 			builder.setNegativeButton("Manual", new OnClickListener() {
-				
+
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
 					Intent editActivityIntent = new Intent(getActivity(),
@@ -122,7 +124,7 @@ public class MainFragment extends Fragment {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-    
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -139,35 +141,37 @@ public class MainFragment extends Fragment {
 		mListview = (ListView) mRootView.findViewById(R.id.main_movie_listview);
 		mAdapter = new MyCursorAdapter(getActivity(), mMovieCursor);
 		mListview.setAdapter(mAdapter);
-		mListview.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
-			}
-		});
-		registerForContextMenu(mListview);
+		//registerForContextMenu(mListview);
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode,
-			Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != Activity.RESULT_OK) {
 			return;
 		}
-		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH) { // TODO: Change this to also check if a movie was added. Can be part of the bundle on activity result
+		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH) { 
+			// TODO: Change this to also check if a movie was added.
+			// Can be part of the bundle on activity result
+			// No need to swapcursor if the database wasn't updated
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
 		}
 	}
-	
+
 	private class MyCursorAdapter extends CursorAdapter {
+		MovieHolder holder;
+		
 		public MyCursorAdapter(Context context, Cursor cursor) {
 			super(context, cursor, true);
 		}
 
 		@Override
 		public void bindView(View movieView, Context context, Cursor cursor) {
+			Movie movie = new Movie(getActivity(), cursor);
 
+			holder = (MovieHolder) movieView.getTag();
+			holder.setMovie(movie);
+			
 			mThumbnailIV = (ImageView) movieView
 					.findViewById(R.id.list_item_thumb);
 			ImageView watchCheckIV = (ImageView) movieView
@@ -180,51 +184,62 @@ public class MainFragment extends Fragment {
 					.findViewById(R.id.list_item_rt_rating);
 			TextView my_ratingTV = (TextView) movieView
 					.findViewById(R.id.list_item_my_rating);
-
+			
 			/* Load the image to the thumbnail */
 			mThumbnailIV.setImageResource(R.drawable.thumb);
-			MainActivity.GetImage.download(
-					cursor.getString(cursor
-						  .getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC)), 
-					getActivity(), 
-					mThumbnailIV, 
-					TARGET_HEIGHT);
-			
-			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
-			if (cursor.getInt(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED)) == Movie.UNWATCHED) {
+			MainActivity.GetImage.download(movie.getPic(),
+					getActivity(), mThumbnailIV, TARGET_HEIGHT);
+
+			/*
+			 * Displayed checkmark image (green/grey) depends if user has seen
+			 * the movie
+			 */
+			if (movie.getWatched() == Movie.UNWATCHED) {
 				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
 			} else {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
-			
+
 			/* Display the title textview with title and year span */
 			titleTV.setMovementMethod(LinkMovementMethod.getInstance());
-			titleTV.setText(DetailFragment.getTitleYearSpan(
-						getActivity(), 
-						cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_TITLE)),
-						cursor.getInt(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_YEAR)) ), 
+			titleTV.setText(DetailFragment.getTitleYearSpan(getActivity(),
+					movie.getTitle(),
+					movie.getYear()),
 					BufferType.SPANNABLE);
-			
+
 			/* Display description */
-			descriptionTV.setText(cursor.getString(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DESCRIPTION)));
-			
-			/* Display Rotten Rating  */
-			rt_ratingTV.setText(Double.toString(cursor.getDouble(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_RT_RATING))));
-			
+			descriptionTV.setText(movie.getDescription());
+
+			/* Display Rotten Rating */
+			rt_ratingTV.setText(Double.toString(movie.getRt_rating()));
+
 			/* Display User Rating */
-			my_ratingTV.setText(Double.toString(cursor.getInt(cursor
-					.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_USER_RATING))));
+			my_ratingTV.setText(Double.toString(movie.getUser_rating()));
+			
+			movieView.setOnClickListener(new android.view.View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(getActivity(), DetailsActivity.class);
+					Movie movie = holder.getMovie();
+					intent.putExtra("isNew",true);
+					intent.putExtra("movie", movie);
+					startActivity(intent);
+					//startActivityForResult(intent, SAVE_MOVIE_REQUEST_CODE);
+				}
+			});
 		}
 
 		@Override
 		public View newView(Context context, Cursor arg1, ViewGroup group) {
+			MovieHolder holder = new MovieHolder();
 			View itemView = null;
 
-			itemView = getActivity().getLayoutInflater().inflate(R.layout.item_layout,
-					null);
+			itemView = getActivity().getLayoutInflater().inflate(
+					R.layout.item_layout, null);
+			
+			itemView.setTag(holder);
 			return itemView;
 		}
 	}
