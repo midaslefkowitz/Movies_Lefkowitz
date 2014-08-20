@@ -34,9 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-import com.example.movies_lefkowitz.model.Movie;
-import com.example.movies_lefkowitz.model.MovieHolder;
-import com.example.movies_lefkowitz.model.MoviesDBAdapter;
+import com.example.movies_lefkowitz.model.*;
 
 public class MainFragment extends Fragment {
 
@@ -46,17 +44,13 @@ public class MainFragment extends Fragment {
 	private MyCursorAdapter mAdapter;
 	private View mRootView;
 	private ImageView mThumbnailIV;
-	private MovieHolder holder;
 	
 	private static final String ADD_MOVIE_DIALOG_TAG = "add movie dialog";
 	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_ADD = 0;
-	protected static final int REQUEST_SEARCH = 1;
-	protected static final int REQUEST_MANUAL = 2;
 
-	public MainFragment() {
-	}
+	public MainFragment() {}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +76,7 @@ public class MainFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		switch (id) {
+		switch (id) { 
 		case R.id.action_add:
 			FragmentManager fm = getActivity().getFragmentManager();
 			AddMovieDialogFragment dialog = new AddMovieDialogFragment();
@@ -119,6 +113,11 @@ public class MainFragment extends Fragment {
 		if (resultCode != Activity.RESULT_OK) {
 			return;
 		}
+		if (requestCode == REQUEST_ADD) {
+			mMovieCursor = mMyDb.getAllMovies();
+			mAdapter.swapCursor(mMovieCursor);
+		}
+		/*
 		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH) { 
 			// TODO: Change this to also check if a movie was added.
 			// Can be part of the bundle on activity result
@@ -126,6 +125,7 @@ public class MainFragment extends Fragment {
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
 		}
+		*/
 	}
 
 	private class MyCursorAdapter extends CursorAdapter {
@@ -193,7 +193,6 @@ public class MainFragment extends Fragment {
 					// TODO Auto-generated method stub
 					Intent intent = new Intent(getActivity(), DetailsActivity.class);
 					Movie movie = holder.getMovie();
-					intent.putExtra("isNew",true);
 					intent.putExtra("movie", movie);
 					startActivity(intent);
 					//startActivityForResult(intent, SAVE_MOVIE_REQUEST_CODE);

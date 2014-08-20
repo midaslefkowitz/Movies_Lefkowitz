@@ -33,8 +33,7 @@ public class GenrePickerFragment extends DialogFragment {
 		}
 		return genresList;
 	}
-	
-	
+		
 	public static GenrePickerFragment newInstance(
 			ArrayList<String> selectedItems) {
 		Bundle args = new Bundle();
@@ -64,7 +63,6 @@ public class GenrePickerFragment extends DialogFragment {
 			}
 		}
 
-		
 		return new AlertDialog.Builder(getActivity())
 				.setTitle(R.string.genre_fragment_title) // Set the title
 				.setMultiChoiceItems(R.array.genres, // Specify the list array,

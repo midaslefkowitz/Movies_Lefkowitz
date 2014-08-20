@@ -243,7 +243,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					Movie movie = new Movie(getActivity(), title);
 					// get watched
 					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-					movie.setWatched(watchedCB.isChecked() ? movie.WATCHED : movie.UNWATCHED);
+					movie.setWatched(watchedCB.isChecked() ? Movie.WATCHED : Movie.UNWATCHED);
 					// get pic URL
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
