@@ -16,6 +16,8 @@
 
 package com.example.movies_lefkowitz;
 
+// TODO: progress placeholder until image download
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;

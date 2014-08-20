@@ -2,6 +2,8 @@ package com.example.movies_lefkowitz;
 
 // TODO: ProgressDialog
 // TODO: Cancel Button
+// TODO: Save button in context menu
+// TODO: Save button in details activity if came from this activity
 
 
 import java.io.BufferedReader;
