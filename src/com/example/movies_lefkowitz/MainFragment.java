@@ -135,7 +135,6 @@ public class MainFragment extends Fragment
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
 		}
-		
 	}
 
 	private class MyCursorAdapter extends CursorAdapter {
