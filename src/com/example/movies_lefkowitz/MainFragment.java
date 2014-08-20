@@ -15,9 +15,11 @@
 package com.example.movies_lefkowitz;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -45,10 +47,11 @@ public class MainFragment extends Fragment {
 	private View mRootView;
 	private ImageView mThumbnailIV;
 	
-	private static final String ADD_MOVIE_DIALOG_TAG = "add movie dialog";
 	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_ADD = 0;
+	protected static final int REQUEST_SEARCH = 0;
+	protected static final int REQUEST_MANUAL = 1;
 
 	public MainFragment() {}
 
@@ -78,10 +81,40 @@ public class MainFragment extends Fragment {
 		int id = item.getItemId();
 		switch (id) { 
 		case R.id.action_add:
-			FragmentManager fm = getActivity().getFragmentManager();
-			AddMovieDialogFragment dialog = new AddMovieDialogFragment();
-			dialog.setTargetFragment(MainFragment.this, REQUEST_ADD);
-			dialog.show(fm, ADD_MOVIE_DIALOG_TAG);
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Add Movie")
+					.setMessage(
+							"Would you like to add movie manually or from the internet?");
+
+			builder.setPositiveButton("Internet", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					Intent searchActivityIntent = new Intent(getActivity(),
+							InternetSearchActivity.class);
+					startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
+				}
+			});
+
+			builder.setNegativeButton("Manual", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					Intent editActivityIntent = new Intent(getActivity(),
+							Add_Edit_Activity.class);
+					startActivityForResult(editActivityIntent, REQUEST_MANUAL);
+				}
+			});
+
+			builder.setNeutralButton("Cancel", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					return;
+				}
+			});
+
+			builder.create().show();
 			break;
 		case R.id.action_settings:
 			return true;
