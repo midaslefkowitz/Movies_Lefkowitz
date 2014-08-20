@@ -1107,10 +1107,10 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f050023;
         public static final int action_bar_title=0x7f050022;
         public static final int action_context_bar=0x7f05001d;
+        public static final int action_delete_all=0x7f05006f;
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05006f;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_edit_cancel=0x7f05004f;
         public static final int add_edit_cast=0x7f05004c;
@@ -1321,44 +1321,45 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_add=0x7f0a0010;
+        public static final int action_delete_all=0x7f0a0011;
         public static final int action_settings=0x7f0a000f;
-        public static final int add_edit_cast=0x7f0a0027;
-        public static final int add_edit_description=0x7f0a0025;
-        public static final int add_edit_director=0x7f0a0028;
-        public static final int add_edit_genre=0x7f0a0022;
-        public static final int add_edit_my_rating=0x7f0a0026;
-        public static final int add_edit_pic=0x7f0a001e;
-        public static final int add_edit_preview=0x7f0a001f;
-        public static final int add_edit_rating_select=0x7f0a0023;
-        public static final int add_edit_runtime=0x7f0a0024;
-        public static final int add_edit_title=0x7f0a0020;
-        public static final int add_edit_watched=0x7f0a001d;
-        public static final int add_edit_year=0x7f0a0021;
+        public static final int add_edit_cast=0x7f0a0028;
+        public static final int add_edit_description=0x7f0a0026;
+        public static final int add_edit_director=0x7f0a0029;
+        public static final int add_edit_genre=0x7f0a0023;
+        public static final int add_edit_my_rating=0x7f0a0027;
+        public static final int add_edit_pic=0x7f0a001f;
+        public static final int add_edit_preview=0x7f0a0020;
+        public static final int add_edit_rating_select=0x7f0a0024;
+        public static final int add_edit_runtime=0x7f0a0025;
+        public static final int add_edit_title=0x7f0a0021;
+        public static final int add_edit_watched=0x7f0a001e;
+        public static final int add_edit_year=0x7f0a0022;
         public static final int app_name=0x7f0a000d;
-        public static final int button_search=0x7f0a001b;
-        public static final int cancel=0x7f0a0012;
-        public static final int detail_item_directed_by=0x7f0a0017;
-        public static final int detail_item_rating=0x7f0a0016;
-        public static final int detail_item_rt=0x7f0a0015;
-        public static final int detail_item_starring=0x7f0a0018;
-        public static final int enter_a_movie=0x7f0a001a;
-        public static final int genre_fragment_title=0x7f0a002a;
+        public static final int button_search=0x7f0a001c;
+        public static final int cancel=0x7f0a0013;
+        public static final int detail_item_directed_by=0x7f0a0018;
+        public static final int detail_item_rating=0x7f0a0017;
+        public static final int detail_item_rt=0x7f0a0016;
+        public static final int detail_item_starring=0x7f0a0019;
+        public static final int enter_a_movie=0x7f0a001b;
+        public static final int genre_fragment_title=0x7f0a002b;
         public static final int hello_world=0x7f0a000e;
-        public static final int ok=0x7f0a0013;
-        public static final int rating_fragment_title=0x7f0a002b;
-        public static final int save=0x7f0a0011;
+        public static final int ok=0x7f0a0014;
+        public static final int rating_fragment_title=0x7f0a002c;
+        public static final int save=0x7f0a0012;
         /**  Add Edit Movie Fragment 
          */
-        public static final int title_activity_add_edit=0x7f0a001c;
+        public static final int title_activity_add_edit=0x7f0a001d;
         /**  Detail Activity Fragment 
          */
-        public static final int title_activity_details=0x7f0a0014;
+        public static final int title_activity_details=0x7f0a0015;
         /**  Internet Search Activity Fragment 
          */
-        public static final int title_activity_internet_search=0x7f0a0019;
+        public static final int title_activity_internet_search=0x7f0a001a;
         /**  Dialogs 
          */
-        public static final int year_fragment_title=0x7f0a0029;
+        public static final int year_fragment_title=0x7f0a002a;
     }
     public static final class style {
         /** 

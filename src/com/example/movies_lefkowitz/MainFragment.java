@@ -2,7 +2,7 @@
  * TODO: 
  * 1. Need to implement saving in onPause and loading in onResume 
  * 2. Context menus
- * 3. Change add_movie icon to show always
+ * 3. Only show delete all action item if there are movies in the db
  * 4. Side by side fragments of movies and details
  */
 
@@ -33,7 +33,8 @@ import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class MainFragment extends Fragment 
-	implements AddMovieDialogFragment.AddMovieDialogListener {
+	implements AddMovieDialogFragment.AddMovieDialogListener, 
+	DeleteAllDialogFragment.DeleteAllDialogListener {
 
 	private MoviesDBAdapter mMyDb;
 	private ListView mListview;
@@ -45,8 +46,9 @@ public class MainFragment extends Fragment
 	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_ADD = 0;
-	protected static final int REQUEST_SEARCH = 0;
-	protected static final int REQUEST_MANUAL = 1;
+	protected static final int REQUEST_DELETE = 1;
+	protected static final int REQUEST_SEARCH = 2;
+	protected static final int REQUEST_MANUAL = 3;
 
 	public MainFragment() {}
 
@@ -77,12 +79,15 @@ public class MainFragment extends Fragment
 		switch (id) { 
 		case R.id.action_add:
 			// Create an instance of the dialog fragment and show it
-			DialogFragment dialog = new AddMovieDialogFragment();
-			dialog.setTargetFragment(this, REQUEST_ADD);
-		    dialog.show(getFragmentManager(), "AddMovieDialogFragment");
+			DialogFragment addDialog = new AddMovieDialogFragment();
+			addDialog.setTargetFragment(this, REQUEST_ADD);
+			addDialog.show(getFragmentManager(), "AddMovieDialogFragment");
 			break;
-		case R.id.action_settings:
-			return true;
+		case R.id.action_delete_all:
+			DialogFragment deleteDialog = new DeleteAllDialogFragment();
+			deleteDialog.setTargetFragment(this, REQUEST_DELETE);
+			deleteDialog.show(getFragmentManager(), "DeleteAllMovieDialogFragment");
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -107,24 +112,36 @@ public class MainFragment extends Fragment
 	}
 
 	@Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onAddMovieDialogPositiveClick(DialogFragment dialog) {
 		Intent searchActivityIntent = new Intent(getActivity(),
 				InternetSearchActivity.class);
 		startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+    public void onAddMovieDialogNegativeClick(DialogFragment dialog) {
     	Intent editActivityIntent = new Intent(getActivity(),
 				Add_Edit_Activity.class);
 		startActivityForResult(editActivityIntent, REQUEST_MANUAL);
     }
     
     @Override
-    public void onDialogNeutralClick(DialogFragment dialog) {
+    public void onAddMovieDialogNeutralClick(DialogFragment dialog) {
     	return;
     }
 	
+    @Override
+	public void onDeleteAllDialogPositiveClick(DialogFragment dialog) {
+		mMyDb.deleteAll();
+		mMovieCursor = mMyDb.getAllMovies();
+		mAdapter.swapCursor(mMovieCursor);
+	}
+
+	@Override
+	public void onDeleteAllDialogNegativeClick(DialogFragment dialog) {
+		return;		
+	}
+    
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != Activity.RESULT_OK) {
