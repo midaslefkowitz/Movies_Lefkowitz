@@ -2,6 +2,8 @@ package com.example.movies_lefkowitz;
 
 import java.lang.reflect.Field;
 
+import com.example.movies_lefkowitz.helper_classes.ImageDownloader;
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;

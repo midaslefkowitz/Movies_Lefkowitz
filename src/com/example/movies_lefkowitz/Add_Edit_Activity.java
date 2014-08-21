@@ -22,6 +22,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movie_lefkowitz.dialogs.RatingPickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
@@ -35,6 +37,15 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		Intent intent = getIntent();
+		boolean isNew = intent.getBooleanExtra("isNew", true);
+		Bundle args = new Bundle();
+		args.putBoolean("isNew", isNew);
+		if (!isNew) {
+			Movie movie = (Movie) intent.getSerializableExtra("movie");
+			args.putSerializable("movie", movie);
+		}
+		
 	}
 
 	@Override
@@ -46,11 +57,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
+		//int id = item.getItemId();
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -73,15 +80,15 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private SeekBar sb;
 		private EditText eUrl;
 
-		
-		private boolean mValidUrl;
 		private ArrayList<String> mGenreArray;
 		private String mGenre;
-		private String mRating = ""; 
-		private String url;
+		private String mRating = "";
+		private String mUrl = "";
 		private boolean mHasRated = false;
 		private double mMyRating;
-
+		private Movie mMovie = null;
+		private boolean isNew = true;
+		
 		public PlaceholderFragment() {}
 
 		@Override
@@ -89,13 +96,34 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_add_edit, container,
 					false);
+			
+			isNew = getArguments().getBoolean("isNew");
+			if (!isNew) {
+				mMovie = (Movie) getArguments().getSerializable("movie");
+			}
+			
 			setLoadPicFromUrlHandler();
-			setGenreTV();
 			setGenreHandler();
 			setRatingHandler();
 			setSeekBarHandler();
 			setCancelHandler();
 			setSaveHandler();
+			
+			
+			if (!isNew) {
+				setWatched(mMovie);
+				setUrlTV(mMovie);
+				setTitle(mMovie);
+				setYear(mMovie);
+				setGenreTV(mMovie);
+				setRatingTV(mMovie);
+				setRuntime(mMovie);
+				setDescription(mMovie);
+				setUserRating(mMovie);
+				setCast(mMovie);
+				setDirectors(mMovie);
+			}
+			
 			return mRootView;
 		}
 
@@ -116,6 +144,74 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			}
 		}
 
+		private void setWatched(Movie movie) {
+			CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
+			watchedCB.setSelected(movie.getWatched() == Movie.WATCHED);
+		}
+		
+		private void setUrlTV(Movie movie){
+			EditText picEditText = (EditText) mRootView
+					.findViewById(R.id.add_edit_pic);
+			String url = movie.getPic();
+			picEditText.setText(url);
+			setThumbnail(url);
+		}
+		
+		private void setThumbnail (String url){
+			MainActivity.GetImage.download(url, 
+					getActivity(), 
+					mThumbnail, 
+					TARGET_HEIGHT);
+		}
+		
+		private void setTitle(Movie movie) {
+			EditText titleEditText = (EditText) mRootView.findViewById(R.id.add_edit_title);
+			titleEditText.setText(movie.getTitle());
+		}
+		
+		private void setYear(Movie movie) {
+			EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);
+			yearEditText.setText( Integer.toString(movie.getYear() ) );
+		}
+		
+		private void setGenreTV(Movie movie) {
+			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
+			mGenreTV.setText(movie.getGenre());
+		}
+		
+		private void setRatingTV(Movie movie) {
+			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
+			mRatingTV.setText(movie.getMpaa_rating());
+		}
+		
+		private void setRuntime(Movie movie) {
+			EditText runtimeEditText = (EditText) mRootView.findViewById(R.id.add_edit_runtime);
+			runtimeEditText.setText(Integer.toString(movie.getRuntime() ) );
+		}
+		
+		private void setDescription(Movie movie) {
+			EditText dscrptnEditText = (EditText) mRootView.findViewById(R.id.add_edit_description);
+			dscrptnEditText.setText(movie.getDescription());
+		}
+		
+		private void setUserRating(Movie movie) {
+			double userRating = movie.getUser_rating();
+			sb = (SeekBar) mRootView.findViewById(R.id.add_edit_my_rating_SB);
+			sb.setProgress((int) (userRating * 10));
+			mMyRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_my_rating_TV2);
+			mMyRatingTV.setText(Double.toString(userRating));
+		}
+		
+		private void setCast(Movie movie) {
+			EditText castEditText = (EditText) mRootView.findViewById(R.id.add_edit_cast);
+			castEditText.setText(movie.getCast());
+		}
+		
+		private void setDirectors(Movie movie) {
+			EditText dirEditText = (EditText) mRootView.findViewById(R.id.add_edit_director);
+			dirEditText.setText(movie.getDirector());
+		}
+		
 		private void setGenreTV() {
 			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
 			if (mGenreArray != null && mGenreArray.size() > 0) {
@@ -146,8 +242,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			previewButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					url = eUrl.getText().toString().trim();
-					MainActivity.GetImage.download(url, 
+					mUrl = eUrl.getText().toString().trim();
+					MainActivity.GetImage.download(mUrl, 
 							getActivity(), 
 							mThumbnail, 
 							TARGET_HEIGHT);
@@ -245,10 +341,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					// get pic URL
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
-					String pic = "";
-					if (mValidUrl) { // ensure that saving a valid url
-						pic = picEditText.getText().toString().trim();
-					}
+					String pic = picEditText.getText().toString().trim();
+					
 					movie.setPic(pic);
 					// get year
 					EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);

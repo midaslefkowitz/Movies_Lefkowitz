@@ -38,6 +38,8 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movie_lefkowitz.dialogs.RatingPickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 
 public class DetailFragment extends Fragment {
@@ -161,7 +163,7 @@ public class DetailFragment extends Fragment {
 		
 		if (mMovie.getRottenID()>0) {
 			GetMoviesTask movieTask = new GetMoviesTask(getActivity());
-			movieTask.execute(Integer.toString(mMovie.getRottenID() ) );
+			movieTask.execute(Long.toString(mMovie.getRottenID() ) );
 		} 
 		
 		return mDetailsView;

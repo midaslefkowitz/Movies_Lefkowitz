@@ -29,12 +29,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,8 +47,10 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
+import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class InternetSearchActivity extends ActionBarActivity {
 
@@ -87,8 +92,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 		// private Dialog progressDialog;
 
-		public PlaceholderFragment() {
-		}
+		public PlaceholderFragment() {}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +102,46 @@ public class InternetSearchActivity extends ActionBarActivity {
 			mListview = (ListView) mRootView
 					.findViewById(R.id.internet_search_listView);
 			setSearchClickHandler();
+			registerForContextMenu(mListview);
 			return mRootView;
+		}
+		
+		@Override
+		public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+			getActivity().getMenuInflater().inflate(R.menu.search_context, menu);
+			super.onCreateContextMenu(menu, view, menuInfo);
+		}
+		
+		@Override
+		public boolean onContextItemSelected(MenuItem item) {
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			View view = info.targetView;
+
+			MovieHolder holder = (MovieHolder) view.getTag();
+			Movie movie = holder.getMovie();
+			switch (item.getItemId()) {
+				case R.id.search_context_add:
+					addMovie(movie);
+					return true;
+				case R.id.search_context_details:
+					getMovieDetails(movie);
+					return true;
+				case R.id.search_context_cancel:
+					return true;
+				default:
+					return super.onContextItemSelected(item);
+			}
+		}
+		
+		private void addMovie(Movie movie) {
+			MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
+			db.addMovie(movie);
+		}
+		
+		private void getMovieDetails(Movie movie) {
+			Intent intent = new Intent(getActivity(), DetailsActivity.class); 
+			intent.putExtra("movie", movie);
+			startActivity(intent);
 		}
 
 		private void setSearchClickHandler() {
@@ -371,7 +414,8 @@ public class InternetSearchActivity extends ActionBarActivity {
 					json = new JSONObject(jsonString);
 					return json.getJSONArray(key);
 				} catch (JSONException e) {
-					e.printStackTrace(); // TODO: Make a better catch statement
+					Log.e(LOG_TAG, "Not a valid JSON");
+					e.printStackTrace();
 				}
 				return null;
 			}

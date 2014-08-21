@@ -1098,7 +1098,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f050056;
-        public static final int action_add=0x7f050070;
+        public static final int action_add=0x7f050074;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1107,7 +1107,7 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f050023;
         public static final int action_bar_title=0x7f050022;
         public static final int action_context_bar=0x7f05001d;
-        public static final int action_delete_all=0x7f05006f;
+        public static final int action_delete_all=0x7f050073;
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
@@ -1180,6 +1180,10 @@ containing a value of this type.
         public static final int list_item_rt_rating=0x7f05006c;
         public static final int list_item_thumb=0x7f050067;
         public static final int list_item_title=0x7f050069;
+        public static final int main_context_cancel=0x7f050072;
+        public static final int main_context_delete=0x7f05006f;
+        public static final int main_context_details=0x7f050070;
+        public static final int main_context_edit=0x7f050071;
         public static final int main_movie_listview=0x7f050066;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;
@@ -1192,6 +1196,9 @@ containing a value of this type.
         public static final int search_bar=0x7f050031;
         public static final int search_button=0x7f050033;
         public static final int search_close_btn=0x7f050038;
+        public static final int search_context_add=0x7f050075;
+        public static final int search_context_cancel=0x7f050077;
+        public static final int search_context_details=0x7f050076;
         public static final int search_edit_frame=0x7f050034;
         public static final int search_go_btn=0x7f05003a;
         public static final int search_mag_icon=0x7f050035;
@@ -1277,7 +1284,9 @@ containing a value of this type.
         public static final int details=0x7f0d0001;
         public static final int internet_search=0x7f0d0002;
         public static final int main=0x7f0d0003;
-        public static final int movies_main_fragment=0x7f0d0004;
+        public static final int main_context=0x7f0d0004;
+        public static final int movies_main_fragment=0x7f0d0005;
+        public static final int search_context=0x7f0d0006;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1320,46 +1329,56 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int action_add=0x7f0a0010;
-        public static final int action_delete_all=0x7f0a0011;
-        public static final int action_settings=0x7f0a000f;
-        public static final int add_edit_cast=0x7f0a0028;
-        public static final int add_edit_description=0x7f0a0026;
-        public static final int add_edit_director=0x7f0a0029;
-        public static final int add_edit_genre=0x7f0a0023;
-        public static final int add_edit_my_rating=0x7f0a0027;
-        public static final int add_edit_pic=0x7f0a001f;
-        public static final int add_edit_preview=0x7f0a0020;
-        public static final int add_edit_rating_select=0x7f0a0024;
-        public static final int add_edit_runtime=0x7f0a0025;
-        public static final int add_edit_title=0x7f0a0021;
-        public static final int add_edit_watched=0x7f0a001e;
-        public static final int add_edit_year=0x7f0a0022;
+        /**  Main Fragment 
+         */
+        public static final int action_add_new=0x7f0a0011;
+        /**  Internet Search Context 
+         */
+        public static final int action_add_this=0x7f0a001e;
+        /**  Main Context 
+         */
+        public static final int action_delete=0x7f0a0013;
+        public static final int action_delete_all=0x7f0a0012;
+        public static final int action_details=0x7f0a0014;
+        public static final int action_edit=0x7f0a0015;
+        public static final int add_edit_cast=0x7f0a002a;
+        public static final int add_edit_description=0x7f0a0028;
+        public static final int add_edit_director=0x7f0a002b;
+        public static final int add_edit_genre=0x7f0a0025;
+        public static final int add_edit_my_rating=0x7f0a0029;
+        public static final int add_edit_pic=0x7f0a0021;
+        public static final int add_edit_preview=0x7f0a0022;
+        public static final int add_edit_rating_select=0x7f0a0026;
+        public static final int add_edit_runtime=0x7f0a0027;
+        public static final int add_edit_title=0x7f0a0023;
+        public static final int add_edit_watched=0x7f0a0020;
+        public static final int add_edit_year=0x7f0a0024;
         public static final int app_name=0x7f0a000d;
-        public static final int button_search=0x7f0a001c;
-        public static final int cancel=0x7f0a0013;
-        public static final int detail_item_directed_by=0x7f0a0018;
-        public static final int detail_item_rating=0x7f0a0017;
-        public static final int detail_item_rt=0x7f0a0016;
-        public static final int detail_item_starring=0x7f0a0019;
-        public static final int enter_a_movie=0x7f0a001b;
-        public static final int genre_fragment_title=0x7f0a002b;
-        public static final int hello_world=0x7f0a000e;
-        public static final int ok=0x7f0a0014;
-        public static final int rating_fragment_title=0x7f0a002c;
-        public static final int save=0x7f0a0012;
+        public static final int button_search=0x7f0a001d;
+        public static final int cancel=0x7f0a000f;
+        public static final int detail_item_directed_by=0x7f0a0019;
+        public static final int detail_item_rating=0x7f0a0018;
+        public static final int detail_item_rt=0x7f0a0017;
+        public static final int detail_item_starring=0x7f0a001a;
+        public static final int enter_a_movie=0x7f0a001c;
+        public static final int genre_fragment_title=0x7f0a002d;
+        public static final int ok=0x7f0a0010;
+        public static final int rating_fragment_title=0x7f0a002e;
+        /**  Buttons 
+         */
+        public static final int save=0x7f0a000e;
         /**  Add Edit Movie Fragment 
          */
-        public static final int title_activity_add_edit=0x7f0a001d;
+        public static final int title_activity_add_edit=0x7f0a001f;
         /**  Detail Activity Fragment 
          */
-        public static final int title_activity_details=0x7f0a0015;
+        public static final int title_activity_details=0x7f0a0016;
         /**  Internet Search Activity Fragment 
          */
-        public static final int title_activity_internet_search=0x7f0a001a;
+        public static final int title_activity_internet_search=0x7f0a001b;
         /**  Dialogs 
          */
-        public static final int year_fragment_title=0x7f0a002a;
+        public static final int year_fragment_title=0x7f0a002c;
     }
     public static final class style {
         /** 

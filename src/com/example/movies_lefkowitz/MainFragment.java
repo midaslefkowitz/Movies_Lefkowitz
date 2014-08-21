@@ -17,24 +17,34 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.LinkMovementMethod;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
+import com.example.movie_lefkowitz.dialogs.AddMovieDialogFragment;
+import com.example.movie_lefkowitz.dialogs.DeleteAllDialogFragment;
+import com.example.movie_lefkowitz.dialogs.DeleteMovieDialogFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class MainFragment extends Fragment 
 	implements AddMovieDialogFragment.AddMovieDialogListener, 
-	DeleteAllDialogFragment.DeleteAllDialogListener {
+	DeleteAllDialogFragment.DeleteAllDialogListener,
+	DeleteMovieDialogFragment.DeleteMovieDialogListener {
 
 	private MoviesDBAdapter mMyDb;
 	private ListView mListview;
@@ -46,9 +56,11 @@ public class MainFragment extends Fragment
 	private static final int TARGET_HEIGHT = 120;
 
 	protected static final int REQUEST_ADD = 0;
-	protected static final int REQUEST_DELETE = 1;
+	protected static final int REQUEST_DELETE_ALL = 1;
 	protected static final int REQUEST_SEARCH = 2;
 	protected static final int REQUEST_MANUAL = 3;
+	protected static final int REQUEST_DELETE_MOVIE = 4;
+	protected static final int REQUEST_EDIT = 5;
 
 	public MainFragment() {}
 
@@ -64,38 +76,10 @@ public class MainFragment extends Fragment
 		mRootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 		openDB();
+		
 		populateListViewFromDB();
+		
 		return mRootView;
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.movies_main_fragment, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		switch (id) { 
-		case R.id.action_add:
-			// Create an instance of the dialog fragment and show it
-			DialogFragment addDialog = new AddMovieDialogFragment();
-			addDialog.setTargetFragment(this, REQUEST_ADD);
-			addDialog.show(getFragmentManager(), "AddMovieDialogFragment");
-			break;
-		case R.id.action_delete_all:
-			DialogFragment deleteDialog = new DeleteAllDialogFragment();
-			deleteDialog.setTargetFragment(this, REQUEST_DELETE);
-			deleteDialog.show(getFragmentManager(), "DeleteAllMovieDialogFragment");
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mMovieCursor.close();
 	}
 
 	private void openDB() {
@@ -108,7 +92,116 @@ public class MainFragment extends Fragment
 		mListview = (ListView) mRootView.findViewById(R.id.main_movie_listview);
 		mAdapter = new MyCursorAdapter(getActivity(), mMovieCursor);
 		mListview.setAdapter(mAdapter);
+		
+		/* Set Click Handlers */
+		
+		/* Short Click 
+		mListview.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(getActivity(), DetailsActivity.class);
+				MovieHolder holder = (MovieHolder) view.getTag();
+				Movie movie = holder.getMovie();
+				intent.putExtra("movie", movie);
+				startActivity(intent);
+				Toast.makeText(getActivity(), "User short clicked" , Toast.LENGTH_SHORT).show();
+			}
+			
+		});
+		*/
+		
+		/* Long Click */
 		//registerForContextMenu(mListview);
+		
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		getActivity().getMenuInflater().inflate(R.menu.main_context, menu);
+		super.onCreateContextMenu(menu, view, menuInfo);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		View view = info.targetView;
+
+		MovieHolder holder = (MovieHolder) view.getTag();
+		Movie movie = holder.getMovie();
+		switch (item.getItemId()) {
+			case R.id.main_context_delete:
+				deleteMovie(movie);
+				return true;
+			case R.id.main_context_details:
+				getMovieDetails(movie);
+				return true;
+			case R.id.main_context_edit:
+				editMovie(movie);
+				return true;
+			case R.id.main_context_cancel:
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
+	}
+	
+	private void deleteMovie(Movie movie) {
+		DialogFragment deleteDialog = DeleteMovieDialogFragment.newInstance(movie);
+		deleteDialog.setTargetFragment(this, REQUEST_DELETE_MOVIE);
+		deleteDialog.show(getFragmentManager(), "DeleteMovieDialogFragment");
+	}
+	
+	private void getMovieDetails(Movie movie) {
+		Intent intent = new Intent(getActivity(), DetailsActivity.class); 
+		intent.putExtra("movie", movie);
+		startActivity(intent);
+	}
+	
+	private void editMovie(Movie movie) {
+		Intent intent = new Intent(getActivity(), Add_Edit_Activity.class); 
+		intent.putExtra("isNew", false);
+		intent.putExtra("movie", movie);
+		startActivityForResult(intent, REQUEST_EDIT);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.movies_main_fragment, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) { 
+		case R.id.action_add:
+			addMovie();
+			break;
+		case R.id.action_delete_all:
+			deleteAllMovies();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void addMovie() {
+		// Create an instance of the dialog fragment and show it
+		DialogFragment addDialog = new AddMovieDialogFragment();
+		addDialog.setTargetFragment(this, REQUEST_ADD);
+		addDialog.show(getFragmentManager(), "AddMovieDialogFragment");
+	}
+	
+	private void deleteAllMovies() {
+		DialogFragment deleteAllDialog = new DeleteAllDialogFragment();
+		deleteAllDialog.setTargetFragment(this, REQUEST_DELETE_ALL);
+		deleteAllDialog.show(getFragmentManager(), "DeleteAllMovieDialogFragment");
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mMovieCursor.close();
 	}
 
 	@Override
@@ -122,6 +215,7 @@ public class MainFragment extends Fragment
     public void onAddMovieDialogNegativeClick(DialogFragment dialog) {
     	Intent editActivityIntent = new Intent(getActivity(),
 				Add_Edit_Activity.class);
+    	editActivityIntent.putExtra("isNew", true);
 		startActivityForResult(editActivityIntent, REQUEST_MANUAL);
     }
     
@@ -139,6 +233,19 @@ public class MainFragment extends Fragment
 
 	@Override
 	public void onDeleteAllDialogNegativeClick(DialogFragment dialog) {
+		return;		
+	}
+	
+    @Override
+	public void onDeleteMovieDialogPositiveClick(DialogFragment dialog, Movie movie) {
+		//TODO: add dialog to confirm delete
+		mMyDb.deleteMovie(movie.getDbID());
+		mMovieCursor = mMyDb.getAllMovies();
+		mAdapter.swapCursor(mMovieCursor);
+	}
+
+	@Override
+	public void onDeleteMovieDialogNegativeClick(DialogFragment dialog) {
 		return;		
 	}
     
@@ -212,6 +319,9 @@ public class MainFragment extends Fragment
 			/* Display User Rating */
 			my_ratingTV.setText(Double.toString(movie.getUser_rating()));
 			
+			/* Set Click Handlers */
+			
+			/* Short Click */
 			movieView.setOnClickListener(new android.view.View.OnClickListener() {
 				
 				@Override
@@ -222,6 +332,11 @@ public class MainFragment extends Fragment
 					startActivity(intent);
 				}
 			});
+			
+			
+			/* Long Click */
+			registerForContextMenu(movieView);
+			
 		}
 
 		@Override

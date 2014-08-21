@@ -35,7 +35,9 @@ public class Movie implements Serializable {
 	private String cast = ""; 
 	private String director = "";
 	
-	private int rottenID = 0;
+	private long rottenID = 0;
+	private long dbID = 0;
+	
 	private int watched = UNWATCHED; 
 	private int year = 0;
 	private int runtime = 0;
@@ -51,7 +53,7 @@ public class Movie implements Serializable {
 				context.getResources().getStringArray(R.array.ratings));
 	}
 	
-	public Movie (Context context, Cursor cursor) {		
+	public Movie (Context context, Cursor cursor) {	
 		this.pic = cursor.getString(cursor
 				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC));  
 		this.title = cursor.getString(cursor
@@ -63,8 +65,11 @@ public class Movie implements Serializable {
 		this.cast = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_CAST)); 
 		this.director = cursor.getString(cursor.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_DIRECTOR));
 		
-		this.rottenID = cursor.getInt(cursor
+		this.rottenID = cursor.getLong(cursor
 				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_ROTTENID));
+		this.dbID = cursor.getLong(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_ROWID));
+		
 		this.watched = cursor.getInt(cursor
 				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_WATCHED));
 		this.year = cursor.getInt(cursor
@@ -82,15 +87,20 @@ public class Movie implements Serializable {
 
 	}
 	
-	
-	
-	
 	/* Getters and Setters */
-	public int getRottenID() {
+	public long getDbID() {
+		return dbID;
+	}
+
+	public void setDbID(long dbID) {
+		this.dbID = dbID;
+	}
+	
+	public long getRottenID() {
 		return rottenID;
 	}
 
-	public void setRottenID(int rottenID) {
+	public void setRottenID(long rottenID) {
 		this.rottenID = rottenID;
 	}	
 	
