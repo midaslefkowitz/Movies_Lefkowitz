@@ -24,7 +24,7 @@ public class DeleteMovieDialogFragment extends DialogFragment {
 	// Use this instance of the interface to deliver action events
 	DeleteMovieDialogListener mListener;
 
-	public static final String EXTRA_DELETE_ALL_MOVIE = "com.example.www.movies_lefkowitz.delete_movie_dialog";
+	public static final String EXTRA_DELETE_MOVIE = "com.example.www.movies_lefkowitz.delete_movie_dialog";
 	public static final String EXTRA_MOVIE = "movie";
 	protected static final int REQUEST_DELETE = 0;
 

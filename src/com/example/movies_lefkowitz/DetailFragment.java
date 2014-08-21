@@ -133,6 +133,8 @@ public class DetailFragment extends Fragment {
 		int mpaa_icon_reference = RatingPickerFragment.getMPAAicon(mMovie.getMpaa_rating());
 		if (mpaa_icon_reference>0) {
 			mMpaaIV.setImageResource(mpaa_icon_reference);
+		} else {
+			mMpaaIV.setImageResource(android.R.color.transparent);
 		}
 
 		/* Display runtime */

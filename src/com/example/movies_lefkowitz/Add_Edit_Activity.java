@@ -36,16 +36,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
-		Intent intent = getIntent();
-		boolean isNew = intent.getBooleanExtra("isNew", true);
-		Bundle args = new Bundle();
-		args.putBoolean("isNew", isNew);
-		if (!isNew) {
-			Movie movie = (Movie) intent.getSerializableExtra("movie");
-			args.putSerializable("movie", movie);
-		}
-		
+		}		
 	}
 
 	@Override
@@ -97,18 +88,20 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			mRootView = inflater.inflate(R.layout.fragment_add_edit, container,
 					false);
 			
-			isNew = getArguments().getBoolean("isNew");
+			Intent intent = getActivity().getIntent();
+			boolean isNew = intent.getBooleanExtra("isNew", true);			
+
 			if (!isNew) {
-				mMovie = (Movie) getArguments().getSerializable("movie");
+				mMovie = (Movie) intent.getSerializableExtra("movie");
 			}
 			
+			setGenreTV();
 			setLoadPicFromUrlHandler();
 			setGenreHandler();
 			setRatingHandler();
 			setSeekBarHandler();
 			setCancelHandler();
 			setSaveHandler();
-			
 			
 			if (!isNew) {
 				setWatched(mMovie);
@@ -225,7 +218,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 
 		private void setRatingTV() {
 			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
-			if (mRating == null) {
+			if (mRating == null || mRating.length()<=0) {
 				mRatingTV.setHint(R.string.add_edit_rating_select);
 			} else {
 				mRatingTV.setText("Rating: " + mRating);
@@ -349,6 +342,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					String yearText = yearEditText.getText().toString().trim();
 					movie.setYear((yearText.length()>0) ? Integer.parseInt(yearText) : 0);
 					// get genre
+					String mG = mGenre; 
+					String mGDefault = getString(R.string.add_edit_genre);
 					movie.setGenre(mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre); //change to null?
 					// get mpaa rating
 					movie.setMpaa_rating(mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating);

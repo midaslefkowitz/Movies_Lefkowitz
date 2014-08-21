@@ -113,7 +113,7 @@ public class MainFragment extends Fragment
 		*/
 		
 		/* Long Click */
-		//registerForContextMenu(mListview);
+		registerForContextMenu(mListview);
 		
 	}
 	
@@ -262,7 +262,7 @@ public class MainFragment extends Fragment
 	}
 
 	private class MyCursorAdapter extends CursorAdapter {
-		MovieHolder holder;
+		
 		
 		public MyCursorAdapter(Context context, Cursor cursor) {
 			super(context, cursor, true);
@@ -272,7 +272,7 @@ public class MainFragment extends Fragment
 		public void bindView(View movieView, Context context, Cursor cursor) {
 			Movie movie = new Movie(getActivity(), cursor);
 
-			holder = (MovieHolder) movieView.getTag();
+			final MovieHolder holder = (MovieHolder) movieView.getTag();
 			holder.setMovie(movie);
 			
 			mThumbnailIV = (ImageView) movieView
@@ -293,10 +293,7 @@ public class MainFragment extends Fragment
 			MainActivity.GetImage.download(movie.getPic(),
 					getActivity(), mThumbnailIV, TARGET_HEIGHT);
 
-			/*
-			 * Displayed checkmark image (green/grey) depends if user has seen
-			 * the movie
-			 */
+			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
 			if (movie.getWatched() == Movie.UNWATCHED) {
 				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
 			} else {
@@ -335,7 +332,7 @@ public class MainFragment extends Fragment
 			
 			
 			/* Long Click */
-			registerForContextMenu(movieView);
+			//registerForContextMenu(movieView);
 			
 		}
 
