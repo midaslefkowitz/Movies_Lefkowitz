@@ -33,20 +33,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
-import com.example.movie_lefkowitz.dialogs.RatingPickerFragment;
+import com.example.movies_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movies_lefkowitz.dialogs.RatingPickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
+import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class DetailFragment extends Fragment {
 	private static final int TARGET_HEIGHT = 140;
 	
 	private View mDetailsView;
 	private Movie mMovie;
+	private String mSource;
 	private ImageView mThumbnailIV;
 	private ImageView mWatchCheckIV;
 	private TextView mTitleTV;
@@ -58,6 +61,8 @@ public class DetailFragment extends Fragment {
 	private TextView mDescriptionTV;
 	private TextView mCastTV;
 	private TextView mDirectorTV;
+	private Button mSaveBtn;
+	private Button mCancelBtn;
 
 	public DetailFragment() {
 	}
@@ -68,6 +73,8 @@ public class DetailFragment extends Fragment {
 		// Get the movie from the intent
 		Intent intent = getActivity().getIntent();
 		mMovie = (Movie) intent.getSerializableExtra("movie");
+		mSource = intent.getStringExtra("source");
+		
 	}
 	
 	@Override
@@ -98,7 +105,18 @@ public class DetailFragment extends Fragment {
 				.findViewById(R.id.detail_item_cast);
 		mDirectorTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_director);
+		mSaveBtn = (Button) mDetailsView
+				.findViewById(R.id.detail_item_save);
+		mCancelBtn = (Button) mDetailsView
+				.findViewById(R.id.detail_item_cancel);
 
+		if (mSource.equalsIgnoreCase("InternetSearchActivity")) {
+			mSaveBtn.setVisibility(android.view.View.VISIBLE);
+			mCancelBtn.setVisibility(android.view.View.VISIBLE);
+			setSaveHandler();
+			setCancelHandler();
+		}
+		
 
 		/* Set placeholder thumbnail before try to download */
 		mThumbnailIV.setImageResource(R.drawable.thumb);
@@ -169,6 +187,29 @@ public class DetailFragment extends Fragment {
 		} 
 		
 		return mDetailsView;
+	}
+
+	private void setCancelHandler() {
+		mCancelBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().finish();
+			}
+		});
+		
+	}
+
+	private void setSaveHandler() {
+		mSaveBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
+				db.addMovie(mMovie);
+				Intent intent = new Intent(getActivity(), MainActivity.class);
+				intent.putExtra("saved", true);
+				startActivity(intent);
+			}
+		}) ;
 	}
 
 	public static SpannableStringBuilder getTitleYearSpan(Context ctx,

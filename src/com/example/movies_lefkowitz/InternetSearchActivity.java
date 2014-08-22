@@ -1,11 +1,5 @@
 package com.example.movies_lefkowitz;
 
-// TODO: ProgressDialog
-// TODO: Cancel Button
-// TODO: Save button in context menu
-// TODO: Save button in details activity if came from this activity
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +31,9 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,7 +43,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movies_lefkowitz.dialogs.GenrePickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
@@ -90,8 +86,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 		private ArrayAdapter<Movie> mMoviesAdapter;
 		private static final int TARGET_HEIGHT = 120;
 
-		// private Dialog progressDialog;
-
 		public PlaceholderFragment() {}
 
 		@Override
@@ -102,6 +96,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			mListview = (ListView) mRootView
 					.findViewById(R.id.internet_search_listView);
 			setSearchClickHandler();
+			setCancelHandler();
 			registerForContextMenu(mListview);
 			return mRootView;
 		}
@@ -136,10 +131,13 @@ public class InternetSearchActivity extends ActionBarActivity {
 		private void addMovie(Movie movie) {
 			MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
 			db.addMovie(movie);
+			getActivity().setResult(RESULT_OK);
+			getActivity().finish();
 		}
 		
 		private void getMovieDetails(Movie movie) {
 			Intent intent = new Intent(getActivity(), DetailsActivity.class); 
+			intent.putExtra("source", InternetSearchActivity.class.getSimpleName().toString());
 			intent.putExtra("movie", movie);
 			startActivity(intent);
 		}
@@ -156,6 +154,17 @@ public class InternetSearchActivity extends ActionBarActivity {
 			});
 		}
 
+		private void setCancelHandler() {
+			Button cancel = (Button) mRootView
+					.findViewById(R.id.internet_search_cancel_button);
+			cancel.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getActivity().finish();
+				}
+			});
+		}
+		
 		private String getUserInput() {
 			EditText inputET = (EditText) mRootView
 					.findViewById(R.id.internet_search_user_input);
@@ -167,7 +176,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			movies.execute(input);
 		}
 
-		private class GetMoviesTask extends
+ 		private class GetMoviesTask extends
 				AsyncTask<String, Void, List<Movie>> {
 
 			/* Constants */
@@ -175,7 +184,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			private final String MOVIE_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
 			private final String MOVIES_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?";
 			private final String PAGE_LIMIT_PARAM = "page_limit";
-			private final String NUM_MOVIES = "50";
+			private final String NUM_MOVIES = "10";
 			private final String API_PARAM = "apikey";
 			private final String MY_API = "smbffqgh98ztd8vq2b4b394a";
 			private final String QUERY_PARAM = "q";
@@ -472,7 +481,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 						}
 						
 						/* Display title */
-						titleTV.setMovementMethod(LinkMovementMethod.getInstance());
 						titleTV.setText(DetailFragment.getTitleYearSpan(
 									getActivity(), 
 									movie.getTitle(),
@@ -495,6 +503,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 							public void onClick(View v) {
 								Intent intent = new Intent(getActivity(), DetailsActivity.class);
 								Movie movie = holder.getMovie();
+								intent.putExtra("source", "InternetSearchActivity");
 								intent.putExtra("isNew",true);
 								intent.putExtra("movie", movie);
 								startActivity(intent);
@@ -506,6 +515,20 @@ public class InternetSearchActivity extends ActionBarActivity {
 					}
 				};		    		
 				mListview.setAdapter(mMoviesAdapter);
+				
+				/* Add Click Listener */
+				mListview.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						Intent intent = new Intent(getActivity(), DetailsActivity.class);
+						Movie movie = ((MovieHolder)(view.getTag())).getMovie();
+						intent.putExtra("source", "InternetSearchActivity");
+						intent.putExtra("isNew",true);
+						intent.putExtra("movie", movie);
+						startActivity(intent);
+					}
+				});
 			}
 		}
 	}

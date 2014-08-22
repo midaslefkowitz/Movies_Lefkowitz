@@ -34,9 +34,9 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.example.movie_lefkowitz.dialogs.AddMovieDialogFragment;
-import com.example.movie_lefkowitz.dialogs.DeleteAllDialogFragment;
-import com.example.movie_lefkowitz.dialogs.DeleteMovieDialogFragment;
+import com.example.movies_lefkowitz.dialogs.AddMovieDialogFragment;
+import com.example.movies_lefkowitz.dialogs.DeleteAllDialogFragment;
+import com.example.movies_lefkowitz.dialogs.DeleteMovieDialogFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
@@ -80,6 +80,18 @@ public class MainFragment extends Fragment
 		populateListViewFromDB();
 		
 		return mRootView;
+	}	
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Intent intent = getActivity().getIntent();
+		boolean saved = intent.getBooleanExtra("saved", false) ;
+		if (saved) {
+			openDB();
+			mMovieCursor = mMyDb.getAllMovies();
+			mAdapter.swapCursor(mMovieCursor);
+		}
 	}
 
 	private void openDB() {
@@ -95,7 +107,7 @@ public class MainFragment extends Fragment
 		
 		/* Set Click Handlers */
 		
-		/* Short Click 
+		/* Short Click */
 		mListview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -104,17 +116,14 @@ public class MainFragment extends Fragment
 				Intent intent = new Intent(getActivity(), DetailsActivity.class);
 				MovieHolder holder = (MovieHolder) view.getTag();
 				Movie movie = holder.getMovie();
+				intent.putExtra("source", "MainFragment");
 				intent.putExtra("movie", movie);
 				startActivity(intent);
-				Toast.makeText(getActivity(), "User short clicked" , Toast.LENGTH_SHORT).show();
 			}
-			
 		});
-		*/
 		
 		/* Long Click */
 		registerForContextMenu(mListview);
-		
 	}
 	
 	@Override
@@ -155,6 +164,7 @@ public class MainFragment extends Fragment
 	
 	private void getMovieDetails(Movie movie) {
 		Intent intent = new Intent(getActivity(), DetailsActivity.class); 
+		intent.putExtra("source", "MainFragment");
 		intent.putExtra("movie", movie);
 		startActivity(intent);
 	}
@@ -208,7 +218,8 @@ public class MainFragment extends Fragment
     public void onAddMovieDialogPositiveClick(DialogFragment dialog) {
 		Intent searchActivityIntent = new Intent(getActivity(),
 				InternetSearchActivity.class);
-		startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
+		startActivity(searchActivityIntent);
+		//startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
     }
 
     @Override
@@ -238,7 +249,6 @@ public class MainFragment extends Fragment
 	
     @Override
 	public void onDeleteMovieDialogPositiveClick(DialogFragment dialog, Movie movie) {
-		//TODO: add dialog to confirm delete
 		mMyDb.deleteMovie(movie.getDbID());
 		mMovieCursor = mMyDb.getAllMovies();
 		mAdapter.swapCursor(mMovieCursor);
@@ -301,7 +311,7 @@ public class MainFragment extends Fragment
 			}
 
 			/* Display the title textview with title and year span */
-			titleTV.setMovementMethod(LinkMovementMethod.getInstance());
+			//titleTV.setMovementMethod(LinkMovementMethod.getInstance());
 			titleTV.setText(DetailFragment.getTitleYearSpan(getActivity(),
 					movie.getTitle(),
 					movie.getYear()),
@@ -319,17 +329,19 @@ public class MainFragment extends Fragment
 			/* Set Click Handlers */
 			
 			/* Short Click */
+			/*
 			movieView.setOnClickListener(new android.view.View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(getActivity(), DetailsActivity.class);
 					Movie movie = holder.getMovie();
+					intent.putExtra("source", MainFragment.class.getSimpleName().toString());
 					intent.putExtra("movie", movie);
 					startActivity(intent);
 				}
 			});
-			
+			*/
 			
 			/* Long Click */
 			//registerForContextMenu(movieView);

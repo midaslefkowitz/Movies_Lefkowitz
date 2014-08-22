@@ -1,8 +1,12 @@
 package com.example.movies_lefkowitz;
 
 import java.util.ArrayList;
-
+import java.util.Calendar;
+import java.lang.reflect.Field;
+ 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -22,8 +27,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.movie_lefkowitz.dialogs.GenrePickerFragment;
-import com.example.movie_lefkowitz.dialogs.RatingPickerFragment;
+import com.example.movies_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movies_lefkowitz.dialogs.RatingPickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
@@ -163,8 +168,9 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		}
 		
 		private void setYear(Movie movie) {
-			EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);
-			yearEditText.setText( Integer.toString(movie.getYear() ) );
+			EditText yearET = (EditText) mRootView.findViewById(R.id.add_edit_year);
+			yearET.setText( Integer.toString(movie.getYear() ) );
+			
 		}
 		
 		private void setGenreTV(Movie movie) {
@@ -244,7 +250,89 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			});
 			
 		}
+		
+		/*
+		private void setYearHandler() {
+			mYearTV = (TextView) mRootView.findViewById(R.id.add_edit_year);
+			mYearTV.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
+				@Override
+				public void onFocusChange(View v, boolean hasFocus) {
+
+					Calendar c = Calendar.getInstance();
+
+					c.get(Calendar.YEAR);
+					c.get(Calendar.MONTH);
+					c.get(Calendar.DAY_OF_MONTH);
+
+					DatePickerDialog dialog = this.customDatePicker();
+					dialog.show();
+				}
+
+				OnDateSetListener dateDialog = new OnDateSetListener() {
+
+					@Override
+					public void onDateSet(DatePicker view, int year,
+							int monthOfYear, int dayOfMonth) {
+						Calendar c = Calendar.getInstance();
+
+						c.set(Calendar.YEAR, year);
+
+						mYearTV.setText("" + year);
+
+						//yearMovie = year;
+					}
+				};
+
+				public DatePickerDialog customDatePicker() {
+
+					Calendar c = Calendar.getInstance();
+
+					int mYear = c.get(Calendar.YEAR);
+					int mMonth = c.get(Calendar.MONTH);
+					int mDay = c.get(Calendar.DAY_OF_MONTH);
+					DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+							dateDialog, mYear, mMonth, mDay);
+					try {
+						Field[] datePickerDialogFields = dpd.getClass().getDeclaredFields();
+						for (Field datePickerDialogField : datePickerDialogFields) {
+							if (datePickerDialogField.getName().equals("mDatePicker")) {
+								datePickerDialogField.setAccessible(true);
+								DatePicker datePicker = (DatePicker) datePickerDialogField
+										.get(dpd);
+								Field datePickerFields[] = datePickerDialogField
+										.getType().getDeclaredFields();
+								for (Field datePickerField : datePickerFields) {
+									if ("mDayPicker".equals(datePickerField
+											.getName())
+											|| "mDaySpinner".equals(datePickerField
+													.getName())
+											|| "mMonthSpinner"
+													.equals(datePickerField
+															.getName())) {
+										datePickerField.setAccessible(true);
+										Object dayPicker = new Object();
+										dayPicker = datePickerField.get(datePicker);
+										((View) dayPicker).setVisibility(View.GONE);
+										Object monthPicker = new Object();
+										monthPicker = datePickerField
+												.get(datePicker);
+										((View) monthPicker)
+												.setVisibility(View.GONE);
+									}
+								}
+							}
+
+						}
+					} catch (Exception ex) {
+					}
+					return dpd;
+				}
+
+			});
+		}
+		*/
+		
 		private void setGenreHandler() {
 			mGenreTV = (TextView) mRootView.findViewById(R.id.add_edit_genre);
 			mGenreTV.setOnClickListener(new View.OnClickListener() {
@@ -335,15 +423,12 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
 					String pic = picEditText.getText().toString().trim();
-					
 					movie.setPic(pic);
 					// get year
-					EditText yearEditText = (EditText) mRootView.findViewById(R.id.add_edit_year);
+					TextView yearEditText = (TextView) mRootView.findViewById(R.id.add_edit_year);
 					String yearText = yearEditText.getText().toString().trim();
 					movie.setYear((yearText.length()>0) ? Integer.parseInt(yearText) : 0);
 					// get genre
-					String mG = mGenre; 
-					String mGDefault = getString(R.string.add_edit_genre);
 					movie.setGenre(mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre); //change to null?
 					// get mpaa rating
 					movie.setMpaa_rating(mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating);
