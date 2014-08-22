@@ -15,10 +15,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.method.LinkMovementMethod;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -84,6 +87,8 @@ public class InternetSearchActivity extends ActionBarActivity {
 		View mRootView;
 		private ListView mListview;
 		private ArrayAdapter<Movie> mMoviesAdapter;
+		private InputMethodManager imm = null;
+		
 		private static final int TARGET_HEIGHT = 120;
 
 		public PlaceholderFragment() {}
@@ -100,43 +105,54 @@ public class InternetSearchActivity extends ActionBarActivity {
 			registerForContextMenu(mListview);
 			return mRootView;
 		}
-		
+
 		@Override
-		public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
-			getActivity().getMenuInflater().inflate(R.menu.search_context, menu);
+		public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    
 		}
-		
+
+		@Override
+		public void onCreateContextMenu(ContextMenu menu, View view,
+				ContextMenuInfo menuInfo) {
+			getActivity().getMenuInflater()
+					.inflate(R.menu.search_context, menu);
+		}
+
 		@Override
 		public boolean onContextItemSelected(MenuItem item) {
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+					.getMenuInfo();
 			View view = info.targetView;
 
 			MovieHolder holder = (MovieHolder) view.getTag();
 			Movie movie = holder.getMovie();
 			switch (item.getItemId()) {
-				case R.id.search_context_add:
-					addMovie(movie);
-					return true;
-				case R.id.search_context_details:
-					getMovieDetails(movie);
-					return true;
-				case R.id.search_context_cancel:
-					return true;
-				default:
-					return super.onContextItemSelected(item);
+			case R.id.search_context_add:
+				addMovie(movie);
+				return true;
+			case R.id.search_context_details:
+				getMovieDetails(movie);
+				return true;
+			case R.id.search_context_cancel:
+				return true;
+			default:
+				return super.onContextItemSelected(item);
 			}
 		}
-		
+
 		private void addMovie(Movie movie) {
 			MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
 			db.addMovie(movie);
 			getActivity().setResult(RESULT_OK);
 			getActivity().finish();
 		}
-		
+
 		private void getMovieDetails(Movie movie) {
-			Intent intent = new Intent(getActivity(), DetailsActivity.class); 
-			intent.putExtra("source", InternetSearchActivity.class.getSimpleName().toString());
+			Intent intent = new Intent(getActivity(), DetailsActivity.class);
+			intent.putExtra("source", InternetSearchActivity.class
+					.getSimpleName().toString());
 			intent.putExtra("movie", movie);
 			startActivity(intent);
 		}
@@ -147,10 +163,15 @@ public class InternetSearchActivity extends ActionBarActivity {
 			search.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					closeKeyboard();
 					String userInput = getUserInput();
 					getRottenTomatoJSON(userInput);
 				}
 			});
+		}
+
+		private void closeKeyboard() {
+			imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 		}
 
 		private void setCancelHandler() {
@@ -163,7 +184,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 				}
 			});
 		}
-		
+
 		private String getUserInput() {
 			EditText inputET = (EditText) mRootView
 					.findViewById(R.id.internet_search_user_input);
@@ -175,7 +196,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			movies.execute(input);
 		}
 
- 		private class GetMoviesTask extends
+		private class GetMoviesTask extends
 				AsyncTask<String, Void, List<Movie>> {
 
 			/* Constants */
@@ -187,7 +208,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 			private final String API_PARAM = "apikey";
 			private final String MY_API = "smbffqgh98ztd8vq2b4b394a";
 			private final String QUERY_PARAM = "q";
-			
 
 			/* Fields */
 			private Activity activity;
@@ -308,7 +328,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 				// iterate over JsonArray and add each movie to movie array
 				for (int i = 0; i < movieArray.length(); i++) {
-					
+
 					JSONObject js;
 					String rottenId;
 					try {
@@ -316,32 +336,34 @@ public class InternetSearchActivity extends ActionBarActivity {
 						js = (JSONObject) movieArray.get(i);
 						URL detailedMovieURL;
 						Movie movie = null;
-						
-						if (js.has("id")) { 
-							// if it has a rotten id then get the detailed version of the movie
+
+						if (js.has("id")) {
+							// if it has a rotten id then get the detailed
+							// version of the movie
 							rottenId = js.getString("id");
 							detailedMovieURL = getMovieURL(rottenId);
-							js = new JSONObject(getJSONString(detailedMovieURL));	
+							js = new JSONObject(getJSONString(detailedMovieURL));
 						} else {
 							// if no id then no movie no point in parsing
-							return null; 
+							return null;
 						}
-						
+
 						if (js.has("title")) {
 							String title = js.getString("title");
 							movie = new Movie(activity, title);
 						}
-						
+
 						movie.setRottenID(Integer.parseInt(rottenId));
-						
+
 						if (js.has("year")) {
 							String year = js.getString("year");
 							movie.setYear(Integer.parseInt(year));
 						}
-											
+
 						if (js.has("posters")) {
 							JSONObject posters = js.getJSONObject("posters");
-							String pic = posters.getString("original").replace("tmb", "ori");
+							String pic = posters.getString("original").replace(
+									"tmb", "ori");
 							movie.setPic(pic);
 						}
 
@@ -350,27 +372,28 @@ public class InternetSearchActivity extends ActionBarActivity {
 							movie.setDescription(description);
 						}
 
-						
 						if (js.has("ratings")) {
-							String rating = js.getJSONObject("ratings").getString("audience_score");
-							movie.setRt_rating((Double.parseDouble(rating))/10); 
+							String rating = js.getJSONObject("ratings")
+									.getString("audience_score");
+							movie.setRt_rating((Double.parseDouble(rating)) / 10);
 						}
-						
+
 						if (js.has("genres")) {
 							JSONArray genres = js.getJSONArray("genres");
 							ArrayList<String> genreArrayList = new ArrayList<String>();
-							for (int j=0; j<genres.length(); j++) {
+							for (int j = 0; j < genres.length(); j++) {
 								genreArrayList.add(genres.getString(j));
 							}
-							String genre = GenrePickerFragment.genreArrayToString(genreArrayList);
+							String genre = GenrePickerFragment
+									.genreArrayToString(genreArrayList);
 							movie.setGenre(genre);
 						}
-						
+
 						if (js.has("mpaa_rating")) {
 							String mpaa_rating = js.getString("mpaa_rating");
 							movie.setMpaa_rating(mpaa_rating);
 						}
-						
+
 						if (js.has("abridged_cast")) {
 							JSONArray actors = js.getJSONArray("abridged_cast");
 							StringBuilder sb = new StringBuilder();
@@ -381,33 +404,37 @@ public class InternetSearchActivity extends ActionBarActivity {
 								}
 							}
 							if (sb.length() > 0) {
-								movie.setCast(sb.substring(0, sb.length() - 2).toString());
+								movie.setCast(sb.substring(0, sb.length() - 2)
+										.toString());
 							}
 						}
-						
+
 						if (js.has("abridged_directors")) {
-							JSONArray directors = js.getJSONArray("abridged_directors");
+							JSONArray directors = js
+									.getJSONArray("abridged_directors");
 							StringBuilder sb = new StringBuilder();
 							for (int j = 0; j < directors.length(); j++) {
-								JSONObject actor = (JSONObject) directors.get(j);
+								JSONObject actor = (JSONObject) directors
+										.get(j);
 								if (actor.has("name")) {
 									sb.append(actor.get("name") + ", ");
 								}
 							}
-							movie.setDirector(sb.substring(0, sb.length() - 2).toString());
+							movie.setDirector(sb.substring(0, sb.length() - 2)
+									.toString());
 						}
-						
+
 						if (js.has("runtime")) {
 							String runtime = js.getString("runtime");
 							if (runtime.length() > 0) {
 								movie.setRuntime(Integer.parseInt(runtime));
 							}
 						}
-						
+
 						movie.setWatched(0);
 						movie.setUser_rating(0);
 						movies.add(movie);
-						
+
 					} catch (JSONException e) {
 						// some sort of json error no point in parsing
 						return null;
@@ -431,26 +458,30 @@ public class InternetSearchActivity extends ActionBarActivity {
 			@Override
 			protected void onPostExecute(List<Movie> movies) {
 				super.onPostExecute(movies);
-				
-				if(movies == null) {
-					Toast.makeText(activity, "Error during search movie", Toast.LENGTH_LONG).show();
+
+				if (movies == null) {
+					Toast.makeText(activity, "Error during search movie",
+							Toast.LENGTH_LONG).show();
 					return;
 				}
-				
+
 				mMoviesAdapter = new ArrayAdapter<Movie>(activity, -1, movies) {
 
 					@Override
-					public View getView(int position, View convertView, ViewGroup parent) {
+					public View getView(int position, View convertView,
+							ViewGroup parent) {
 						Movie movie = getItem(position);
 						View movieView = convertView;
-						
-						if(movieView == null) {
-							movieView = activity.getLayoutInflater().inflate(R.layout.item_layout, null);
-							MovieHolder holder = new MovieHolder();  
+
+						if (movieView == null) {
+							movieView = activity.getLayoutInflater().inflate(
+									R.layout.item_layout, null);
+							MovieHolder holder = new MovieHolder();
 							movieView.setTag(holder);
 						}
 
-						final MovieHolder holder = (MovieHolder)movieView.getTag();
+						final MovieHolder holder = (MovieHolder) movieView
+								.getTag();
 						holder.setMovie(movie);
 
 						ImageView thumbnailIV = (ImageView) movieView
@@ -465,50 +496,55 @@ public class InternetSearchActivity extends ActionBarActivity {
 								.findViewById(R.id.list_item_rt_rating);
 						TextView my_ratingTV = (TextView) movieView
 								.findViewById(R.id.list_item_my_rating);
-						
+
 						thumbnailIV.setImageResource(R.drawable.thumb);
-						MainActivity.GetImage.download(movie.getPic(), 
-														activity, 
-														thumbnailIV, 
-														TARGET_HEIGHT);
-							
-						/* Displayed checkmark image (green/grey) depends if user has seen the movie */
+						MainActivity.GetImage.download(movie.getPic(),
+								activity, thumbnailIV, TARGET_HEIGHT);
+
+						/*
+						 * Displayed checkmark image (green/grey) depends if
+						 * user has seen the movie
+						 */
 						if (movie.getWatched() == Movie.UNWATCHED) {
-							watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+							watchCheckIV
+									.setImageResource(R.drawable.checkmark_grey);
 						} else {
-							watchCheckIV.setImageResource(R.drawable.checkmark_green);
+							watchCheckIV
+									.setImageResource(R.drawable.checkmark_green);
 						}
-						
+
 						/* Display title */
 						titleTV.setText(DetailFragment.getTitleYearSpan(
-									getActivity(), 
-									movie.getTitle(),
-									movie.getYear() ), 
-								BufferType.SPANNABLE);
-						
+								getActivity(), movie.getTitle(),
+								movie.getYear()), BufferType.SPANNABLE);
+
 						/* Display description */
 						descriptionTV.setText(movie.getDescription());
-						
+
 						/* Display Rotten Rating */
-						rt_ratingTV.setText(Double.toString(movie.getRt_rating() ) );
-						
+						rt_ratingTV.setText(Double.toString(movie
+								.getRt_rating()));
+
 						/* Display User Rating */
-						my_ratingTV.setText(Double.toString(movie.getUser_rating() ) );
-						
+						my_ratingTV.setText(Double.toString(movie
+								.getUser_rating()));
+
 						return movieView;
 					}
-				};		    		
+				};
 				mListview.setAdapter(mMoviesAdapter);
-				
+
 				/* Add Click Listener */
 				mListview.setOnItemClickListener(new OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						Intent intent = new Intent(getActivity(), DetailsActivity.class);
-						Movie movie = ((MovieHolder)(view.getTag())).getMovie();
+						Intent intent = new Intent(getActivity(),
+								DetailsActivity.class);
+						Movie movie = ((MovieHolder) (view.getTag()))
+								.getMovie();
 						intent.putExtra("source", "InternetSearchActivity");
-						intent.putExtra("isNew",true);
+						intent.putExtra("isNew", true);
 						intent.putExtra("movie", movie);
 						startActivity(intent);
 					}
