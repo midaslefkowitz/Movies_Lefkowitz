@@ -12,8 +12,7 @@
         android:id="@+id/main_movie_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" >
-
-    </ListView>
+        android:layout_alignParentTop="true" 
+        android:layout_weight="1" />
 
 </RelativeLayout>

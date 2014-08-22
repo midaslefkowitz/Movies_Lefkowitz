@@ -104,7 +104,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 		@Override
 		public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 			getActivity().getMenuInflater().inflate(R.menu.search_context, menu);
-			super.onCreateContextMenu(menu, view, menuInfo);
 		}
 		
 		@Override
@@ -495,21 +494,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 						
 						/* Display User Rating */
 						my_ratingTV.setText(Double.toString(movie.getUser_rating() ) );
-						
-						/* Add Click Listener */
-						movieView.setOnClickListener(new OnClickListener() {
-							
-							@Override
-							public void onClick(View v) {
-								Intent intent = new Intent(getActivity(), DetailsActivity.class);
-								Movie movie = holder.getMovie();
-								intent.putExtra("source", "InternetSearchActivity");
-								intent.putExtra("isNew",true);
-								intent.putExtra("movie", movie);
-								startActivity(intent);
-								//startActivityForResult(intent, SAVE_MOVIE_REQUEST_CODE);
-							}
-						});
 						
 						return movieView;
 					}

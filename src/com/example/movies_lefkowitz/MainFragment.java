@@ -218,8 +218,7 @@ public class MainFragment extends Fragment
     public void onAddMovieDialogPositiveClick(DialogFragment dialog) {
 		Intent searchActivityIntent = new Intent(getActivity(),
 				InternetSearchActivity.class);
-		startActivity(searchActivityIntent);
-		//startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
+		startActivityForResult(searchActivityIntent, REQUEST_SEARCH);
     }
 
     @Override
@@ -272,7 +271,6 @@ public class MainFragment extends Fragment
 	}
 
 	private class MyCursorAdapter extends CursorAdapter {
-		
 		
 		public MyCursorAdapter(Context context, Cursor cursor) {
 			super(context, cursor, true);
