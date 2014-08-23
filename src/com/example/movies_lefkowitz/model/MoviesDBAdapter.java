@@ -109,10 +109,9 @@ public class MoviesDBAdapter {
 	
 	// Add a new set of values to the database.
 	public void addMovie(Movie movie) {
-		if (movieInDB(movie)) {
-			return;
-		}
-		
+		/*
+		 * double[] {tomato_rating, user_rating}
+		 */
 		openWriteable();
 		ContentValues newMovieValues = new ContentValues();
 		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
@@ -192,21 +191,11 @@ public class MoviesDBAdapter {
 		return c;		
 	}
 	
-	public boolean movieInDB(Movie movie) {
-		String rottenID = Long.toString(movie.getRottenID());
-		openReadable();
-		String where = KEY_MOVIE_ROTTENID + "=" + rottenID;
-		Cursor c =	db.query(true, DATABASE_TABLE, ALL_KEYS, 
-				where, null, null, null, null, null);
-		close();
-		return (c != null);
-	}
-	
 	// Change an existing row to be equal to new data.
-	public boolean updateMovie(Movie movie) {
+	public boolean updateMovie(int rowId, Movie movie) {
 		int numChanged;
 		openWriteable();
-		String where = KEY_ROWID + "=" + movie.getDbID();
+		String where = KEY_ROWID + "=" + rowId;
 		ContentValues newMovieValues = new ContentValues();
 		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());

@@ -94,7 +94,11 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					false);
 			
 			Intent intent = getActivity().getIntent();
-			isNew = intent.getBooleanExtra("isNew", true);			
+			boolean isNew = intent.getBooleanExtra("isNew", true);			
+
+			if (!isNew) {
+				mMovie = (Movie) intent.getSerializableExtra("movie");
+			}
 			
 			setGenreTV();
 			setLoadPicFromUrlHandler();
@@ -105,9 +109,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			setSaveHandler();
 			
 			if (!isNew) {
-				mMovie = (Movie) intent.getSerializableExtra("movie");
-				Button save = (Button)mRootView.findViewById(R.id.add_edit_save);
-				save.setText("Update");
 				setWatched(mMovie);
 				setUrlTV(mMovie);
 				setTitle(mMovie);
@@ -450,11 +451,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					movie.setRt_rating(0);
 					
 					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
-					if (isNew) {
-						db.addMovie(movie);
-					} else {
-						db.updateMovie(movie);
-					}
+					db.addMovie(movie);
 					getActivity().setResult(RESULT_OK);
 					getActivity().finish();
 				}
