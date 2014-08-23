@@ -109,10 +109,12 @@ public class MoviesDBAdapter {
 	
 	// Add a new set of values to the database.
 	public void addMovie(Movie movie) {
-		/*
-		 * double[] {tomato_rating, user_rating}
-		 */
 		openWriteable();
+		if (movieInDB(movie)) {
+			Log.i(TAG, "Movie already in DB");
+			close();
+			return;
+		}
 		ContentValues newMovieValues = new ContentValues();
 		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
@@ -138,6 +140,18 @@ public class MoviesDBAdapter {
 		}
 	}
 	
+	private boolean movieInDB(Movie movie) {
+		String rottenID = Long.toString(movie.getRottenID());
+		if (rottenID.length() == 0) { // movie has no rottenID
+			return false;   
+		}
+		String sql = "SELECT * FROM " + DATABASE_TABLE + 
+					" WHERE " + KEY_MOVIE_ROTTENID + 
+					"=" + rottenID;
+		Cursor c =	db.rawQuery(sql, null);
+		return (c.moveToFirst());
+	}
+
 	// Delete a row from the database, by rowId (primary key)
 	public boolean deleteMovie(long rowId) {
 		int rowsDeleted;
