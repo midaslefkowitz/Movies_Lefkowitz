@@ -53,7 +53,9 @@ public class Movie implements Serializable {
 				context.getResources().getStringArray(R.array.ratings));
 	}
 	
-	public Movie (Context context, Cursor cursor) {	
+	public Movie (Context context, Cursor cursor) {
+		this.dbID = cursor.getLong(cursor
+				.getColumnIndex(MoviesDBAdapter.KEY_ROWID));
 		this.pic = cursor.getString(cursor
 				.getColumnIndex(MoviesDBAdapter.KEY_MOVIE_PIC));  
 		this.title = cursor.getString(cursor
@@ -90,10 +92,6 @@ public class Movie implements Serializable {
 	/* Getters and Setters */
 	public long getDbID() {
 		return dbID;
-	}
-
-	public void setDbID(long dbID) {
-		this.dbID = dbID;
 	}
 	
 	public long getRottenID() {
@@ -198,8 +196,12 @@ public class Movie implements Serializable {
 	public void setUser_rating(double user_rating) {
 		this.user_rating = user_rating;
 	}
-
+	
 	public String getTitle() {
 		return title;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

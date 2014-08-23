@@ -1,12 +1,8 @@
 package com.example.movies_lefkowitz;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.lang.reflect.Field;
- 
+
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -63,7 +58,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	public static class PlaceholderFragment extends Fragment {
 		private static final String GENRE_DIALOG_TAG = "genre dialog";
 		private static String RATING_DIALOG_TAG = "rating dialog";	
-		//private static String EXTRA_ADD_EDIT = "com.example.www.movies_lefkowitz.add_edit";
 		private static final int REQUEST_GENRE = 0;
 		private static final int REQUEST_RATING = 1;
 		private static final int TARGET_HEIGHT = 140;
@@ -83,7 +77,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private boolean mHasRated = false;
 		private double mMyRating;
 		private Movie mMovie = null;
-		private boolean isNew = true;
+		private boolean mIsNew = true;
 		
 		public PlaceholderFragment() {}
 
@@ -94,11 +88,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					false);
 			
 			Intent intent = getActivity().getIntent();
-			boolean isNew = intent.getBooleanExtra("isNew", true);			
-
-			if (!isNew) {
-				mMovie = (Movie) intent.getSerializableExtra("movie");
-			}
+			mIsNew = intent.getBooleanExtra("isNew", true);			
 			
 			setGenreTV();
 			setLoadPicFromUrlHandler();
@@ -108,7 +98,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			setCancelHandler();
 			setSaveHandler();
 			
-			if (!isNew) {
+			if (!mIsNew) {
+				mMovie = (Movie) intent.getSerializableExtra("movie");
 				setWatched(mMovie);
 				setUrlTV(mMovie);
 				setTitle(mMovie);
@@ -248,7 +239,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 							TARGET_HEIGHT);
 				}
 			});
-			
 		}
 		
 		/*
@@ -415,43 +405,53 @@ public class Add_Edit_Activity extends ActionBarActivity {
 							 .show();
 						return;
 					}
-					Movie movie = new Movie(getActivity(), title);
+					if (mIsNew) {
+						mMovie = new Movie(getActivity(), title);
+					} else {
+						mMovie.setTitle(title);
+					}
 					// get watched
 					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-					movie.setWatched(watchedCB.isChecked() ? Movie.WATCHED : Movie.UNWATCHED);
+					mMovie.setWatched(watchedCB.isChecked() ? Movie.WATCHED : Movie.UNWATCHED);
 					// get pic URL
 					EditText picEditText = (EditText) mRootView
 							.findViewById(R.id.add_edit_pic);
 					String pic = picEditText.getText().toString().trim();
-					movie.setPic(pic);
+					mMovie.setPic(pic);
 					// get year
 					TextView yearEditText = (TextView) mRootView.findViewById(R.id.add_edit_year);
 					String yearText = yearEditText.getText().toString().trim();
-					movie.setYear((yearText.length()>0) ? Integer.parseInt(yearText) : 0);
+					mMovie.setYear((yearText.length()>0) ? Integer.parseInt(yearText) : 0);
 					// get genre
-					movie.setGenre(mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre); //change to null?
+					mMovie.setGenre(mGenre.equals(getString(R.string.add_edit_genre)) ? "" : mGenre); //change to null?
 					// get mpaa rating
-					movie.setMpaa_rating(mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating);
+					mMovie.setMpaa_rating(mRating.equals(getString(R.string.add_edit_rating_select)) ? "" : mRating);
 					// get runtime
 					EditText runtimeEditText = (EditText) mRootView.findViewById(R.id.add_edit_runtime);
 					String runtimeText = runtimeEditText.getText().toString().trim();
-					movie.setRuntime((runtimeText.length()>0) ? Integer.parseInt(runtimeText) : 0);
+					mMovie.setRuntime((runtimeText.length()>0) ? Integer.parseInt(runtimeText) : 0);
 					// get description
 					EditText dscrptnEditText = (EditText) mRootView.findViewById(R.id.add_edit_description);
-					movie.setDescription(dscrptnEditText.getText().toString().trim());
+					mMovie.setDescription(dscrptnEditText.getText().toString().trim());
 					// get User Rating
-					movie.setUser_rating((!mHasRated && mMyRating==0) ? 0 : mMyRating);
+					mMovie.setUser_rating((!mHasRated && mMyRating==0) ? 0 : mMyRating);
 					// get cast
 					EditText castEditText = (EditText) mRootView.findViewById(R.id.add_edit_cast);
-					movie.setCast(castEditText.getText().toString().trim());
+					mMovie.setCast(castEditText.getText().toString().trim());
 					// get director
 					EditText dirEditText = (EditText) mRootView.findViewById(R.id.add_edit_director);
-					movie.setDirector(dirEditText.getText().toString().trim());
-					// Tomato rating
-					movie.setRt_rating(0);
+					mMovie.setDirector(dirEditText.getText().toString().trim());
+					
+					
 					
 					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
-					db.addMovie(movie);
+					if (mIsNew) {
+						// No tomato rating so set to 0
+						mMovie.setRt_rating(0);
+						db.addMovie(mMovie);
+					} else {
+						db.updateMovie(mMovie);
+					}
 					getActivity().setResult(RESULT_OK);
 					getActivity().finish();
 				}

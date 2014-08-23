@@ -108,12 +108,13 @@ public class MoviesDBAdapter {
 	}
 	
 	// Add a new set of values to the database.
-	public void addMovie(Movie movie) {
+	// Returns the rowID in the db (if successful)
+	public long addMovie(Movie movie) {
 		openWriteable();
 		if (movieInDB(movie)) {
 			Log.i(TAG, "Movie already in DB");
 			close();
-			return;
+			return 0;
 		}
 		ContentValues newMovieValues = new ContentValues();
 		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
@@ -131,7 +132,7 @@ public class MoviesDBAdapter {
 		newMovieValues.put(KEY_MOVIE_USER_RATING, movie.getUser_rating());
 		
 		try {
-			db.insertOrThrow(DATABASE_TABLE, null, newMovieValues);
+			return db.insertOrThrow(DATABASE_TABLE, null, newMovieValues);
 		} catch (SQLiteException ex) {
 			Log.e(TAG, ex.getMessage());
 			throw ex;
@@ -139,7 +140,7 @@ public class MoviesDBAdapter {
 			close();
 		}
 	}
-	
+
 	private boolean movieInDB(Movie movie) {
 		String rottenID = Long.toString(movie.getRottenID());
 		if (rottenID.length() == 0) { // movie has no rottenID
@@ -206,10 +207,11 @@ public class MoviesDBAdapter {
 	}
 	
 	// Change an existing row to be equal to new data.
-	public boolean updateMovie(int rowId, Movie movie) {
+	public boolean updateMovie(Movie movie) {
 		int numChanged;
 		openWriteable();
-		String where = KEY_ROWID + "=" + rowId;
+		String where = KEY_ROWID + "=?";
+		String [] whereArgs = new String [] {String.valueOf(movie.getDbID())};
 		ContentValues newMovieValues = new ContentValues();
 		newMovieValues.put(KEY_MOVIE_ROTTENID, movie.getRottenID());
 		newMovieValues.put(KEY_MOVIE_PIC, movie.getPic());
@@ -226,7 +228,7 @@ public class MoviesDBAdapter {
 		newMovieValues.put(KEY_MOVIE_USER_RATING, movie.getUser_rating());
 	
 		try {
-			numChanged = db.update(DATABASE_TABLE, newMovieValues, where, null);
+			numChanged = db.update(DATABASE_TABLE, newMovieValues, where, whereArgs);
 		} catch (SQLiteException ex) {
 			Log.e(TAG, ex.getMessage());
 			throw ex;

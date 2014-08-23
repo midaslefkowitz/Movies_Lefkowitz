@@ -1,9 +1,8 @@
 /*
  * TODO: 
  * 1. Need to implement saving in onPause and loading in onResume 
- * 2. Context menus
- * 3. Only show delete all action item if there are movies in the db
- * 4. Side by side fragments of movies and details
+ * 2. Only show delete all action item if there are movies in the db
+ * 3. Side by side fragments of movies and details
  */
 
 package com.example.movies_lefkowitz;
@@ -262,7 +261,7 @@ public class MainFragment extends Fragment
 			return;
 		}
 		
-		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH) { 
+		if (requestCode == REQUEST_MANUAL || requestCode == REQUEST_SEARCH  || requestCode == REQUEST_EDIT) { 
 			mMovieCursor = mMyDb.getAllMovies();
 			mAdapter.swapCursor(mMovieCursor);
 		}
@@ -307,7 +306,6 @@ public class MainFragment extends Fragment
 			}
 
 			/* Display the title textview with title and year span */
-			//titleTV.setMovementMethod(LinkMovementMethod.getInstance());
 			titleTV.setText(DetailFragment.getTitleYearSpan(getActivity(),
 					movie.getTitle(),
 					movie.getYear()),
@@ -321,27 +319,6 @@ public class MainFragment extends Fragment
 
 			/* Display User Rating */
 			my_ratingTV.setText(Double.toString(movie.getUser_rating()));
-			
-			/* Set Click Handlers */
-			
-			/* Short Click */
-			/*
-			movieView.setOnClickListener(new android.view.View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), DetailsActivity.class);
-					Movie movie = holder.getMovie();
-					intent.putExtra("source", MainFragment.class.getSimpleName().toString());
-					intent.putExtra("movie", movie);
-					startActivity(intent);
-				}
-			});
-			*/
-			
-			/* Long Click */
-			//registerForContextMenu(movieView);
-			
 		}
 
 		@Override
