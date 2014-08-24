@@ -23,7 +23,7 @@
     <item 
         android:id="@+id/main_context_edit"
         android:orderInCategory="102"
-        android:title="@string/action_edit"
+        android:title="@string/edit"
         android:icon="@android:drawable/ic_menu_edit"
         android:showAsAction="ifRoom|withText"
         app:showAsAction="ifRoom|withText" />

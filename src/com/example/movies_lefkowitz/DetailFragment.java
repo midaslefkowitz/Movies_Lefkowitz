@@ -1,6 +1,3 @@
-// TODO: rework fragment flow depending on if came 
-// from internet search or mainfragment
-
 package com.example.movies_lefkowitz;
 
 import java.io.BufferedReader;
@@ -35,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
@@ -51,6 +49,7 @@ public class DetailFragment extends Fragment {
 	private Movie mMovie;
 	private String mSource;
 	private ImageView mThumbnailIV;
+	private ProgressBar mProgressBarPB;
 	private ImageView mWatchCheckIV;
 	private TextView mTitleTV;
 	private TextView mGenreTV;
@@ -73,8 +72,7 @@ public class DetailFragment extends Fragment {
 		// Get the movie from the intent
 		Intent intent = getActivity().getIntent();
 		mMovie = (Movie) intent.getSerializableExtra("movie");
-		mSource = intent.getStringExtra("source");
-		
+		mSource = intent.getStringExtra("source");		
 	}
 	
 	@Override
@@ -87,6 +85,8 @@ public class DetailFragment extends Fragment {
 				.findViewById(R.id.detail_item_thumb);
 		mWatchCheckIV = (ImageView) mDetailsView
 				.findViewById(R.id.detail_item_check);
+		mProgressBarPB = (ProgressBar) mDetailsView
+				.findViewById(R.id.add_edit_pb);
 		mTitleTV = (TextView) mDetailsView
 				.findViewById(R.id.detail_item_title);
 		mGenreTV = (TextView) mDetailsView
@@ -115,7 +115,7 @@ public class DetailFragment extends Fragment {
 			mCancelBtn.setVisibility(android.view.View.VISIBLE);
 			setSaveHandler();
 			setCancelHandler();
-		}
+		} 
 		
 
 		/* Set placeholder thumbnail before try to download */
@@ -125,7 +125,8 @@ public class DetailFragment extends Fragment {
 		MainActivity.GetImage.download(mMovie.getPic(), 
 				getActivity(), 
 				mThumbnailIV, 
-				TARGET_HEIGHT);
+				TARGET_HEIGHT,
+				mProgressBarPB);
 	
 		/*
 		 * Displayed checkmark image (green/grey) depends if user has seen the
@@ -454,7 +455,8 @@ public class DetailFragment extends Fragment {
 				MainActivity.GetImage.download(newPic, 
 						getActivity(), 
 						mThumbnailIV, 
-						TARGET_HEIGHT);
+						TARGET_HEIGHT,
+						mProgressBarPB);
 			}
 				
 			/*

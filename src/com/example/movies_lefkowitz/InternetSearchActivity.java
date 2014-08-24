@@ -23,15 +23,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -42,6 +40,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
@@ -75,7 +74,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+		//int id = item.getItemId();
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -84,7 +83,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
-		View mRootView;
+		private View mRootView;
 		private ListView mListview;
 		private ArrayAdapter<Movie> mMoviesAdapter;
 		private InputMethodManager imm = null;
@@ -192,7 +191,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 		}
 
 		private void getRottenTomatoJSON(String input) {
-			GetMoviesTask movies = new GetMoviesTask(getActivity());
+			GetMoviesTask movies = new GetMoviesTask(getActivity(), mRootView);
 			movies.execute(input);
 		}
 
@@ -211,12 +210,21 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 			/* Fields */
 			private Activity activity;
+			private ProgressBar progress = null;
 
-			/* Constructor to get Activity */
-			public GetMoviesTask(Activity activity) {
+			/* Constructor to get Activity and Rootview */
+			public GetMoviesTask(Activity activity, View v) {
 				this.activity = activity;
+				progress = (ProgressBar) v.findViewById(R.id.internet_search_listview_pb);
 			}
-
+			
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				// Show Progress bar
+				progress.setVisibility(android.view.View.VISIBLE);
+			}
+			
 			@Override
 			protected List<Movie> doInBackground(String... params) {
 				// Get URL for query
@@ -459,6 +467,8 @@ public class InternetSearchActivity extends ActionBarActivity {
 			protected void onPostExecute(List<Movie> movies) {
 				super.onPostExecute(movies);
 
+				progress.setVisibility(android.view.View.GONE);
+				
 				if (movies == null) {
 					Toast.makeText(activity, "Error during search movie",
 							Toast.LENGTH_LONG).show();
@@ -488,6 +498,8 @@ public class InternetSearchActivity extends ActionBarActivity {
 								.findViewById(R.id.list_item_thumb);
 						ImageView watchCheckIV = (ImageView) movieView
 								.findViewById(R.id.list_item_check);
+						ProgressBar progressBarPB = (ProgressBar) movieView
+								.findViewById(R.id.list_item_pb);
 						TextView titleTV = (TextView) movieView
 								.findViewById(R.id.list_item_title);
 						TextView descriptionTV = (TextView) movieView
@@ -499,7 +511,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 						thumbnailIV.setImageResource(R.drawable.thumb);
 						MainActivity.GetImage.download(movie.getPic(),
-								activity, thumbnailIV, TARGET_HEIGHT);
+								activity, thumbnailIV, TARGET_HEIGHT, progressBarPB);
 
 						/*
 						 * Displayed checkmark image (green/grey) depends if

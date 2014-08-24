@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -64,6 +65,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		
 		private View mRootView;
 		private ImageView mThumbnail;
+		private ProgressBar mProgressBarPB;
 		private TextView mGenreTV;
 		private TextView mRatingTV;
 		private TextView mMyRatingTV;
@@ -86,9 +88,18 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			mRootView = inflater.inflate(R.layout.fragment_add_edit, container,
 					false);
-			
+			mProgressBarPB = (ProgressBar) mRootView
+						.findViewById(R.id.add_edit_pb);
 			Intent intent = getActivity().getIntent();
 			mIsNew = intent.getBooleanExtra("isNew", true);			
+			if (mIsNew) {
+				getActivity().setTitle(getResources()
+						.getString(R.string.title_activity_add));
+			} else {
+				mMovie = (Movie) intent.getSerializableExtra("movie");
+				getActivity().setTitle(getResources()
+						.getString(R.string.edit) + " \"" + mMovie.getTitle() + " \"");
+			}
 			
 			setGenreTV();
 			setLoadPicFromUrlHandler();
@@ -99,10 +110,9 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			setSaveHandler();
 			
 			if (!mIsNew) {
-				mMovie = (Movie) intent.getSerializableExtra("movie");
 				setWatched(mMovie);
 				setUrlTV(mMovie);
-				setTitle(mMovie);
+				set_title(mMovie);
 				setYear(mMovie);
 				setGenreTV(mMovie);
 				setRatingTV(mMovie);
@@ -150,10 +160,11 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			MainActivity.GetImage.download(url, 
 					getActivity(), 
 					mThumbnail, 
-					TARGET_HEIGHT);
+					TARGET_HEIGHT, 
+					mProgressBarPB);
 		}
 		
-		private void setTitle(Movie movie) {
+		private void set_title(Movie movie) {
 			EditText titleEditText = (EditText) mRootView.findViewById(R.id.add_edit_title);
 			titleEditText.setText(movie.getTitle());
 		}
@@ -236,7 +247,8 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					MainActivity.GetImage.download(mUrl, 
 							getActivity(), 
 							mThumbnail, 
-							TARGET_HEIGHT);
+							TARGET_HEIGHT,
+							mProgressBarPB);
 				}
 			});
 		}

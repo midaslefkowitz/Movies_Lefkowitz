@@ -7,6 +7,7 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
+    <string name="edit">Edit</string>
  
     <!-- Main Fragment -->
     <string name="action_add_new">Add a new movie</string>
@@ -15,17 +16,17 @@
     <!-- Main Context -->
     <string name="action_delete">Delete</string>
     <string name="action_details">Details</string>
-    <string name="action_edit">Edit</string>
+    
     
     <!-- Detail Activity Fragment -->
-    <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_details">Movie Details</string>
     <string name="detail_item_rt">Tomato Rating</string>
     <string name="detail_item_rating">My Rating</string>
     <string name="detail_item_directed_by">Director: </string>
     <string name="detail_item_starring">Starring: </string>
 
     <!-- Internet Search Activity Fragment -->
-    <string name="title_activity_internet_search">InternetSearchActivity</string>
+    <string name="title_activity_internet_search">Search for a Movie</string>
     <string name="enter_a_movie">Enter a movie</string>
     <string name="button_search">Search</string>
     
@@ -33,6 +34,7 @@
     <string name="action_add_this">Add this movie</string>
 
     <!-- Add Edit Movie Fragment -->
+    <string name="title_activity_add">Add A New Movie</string>
     <string name="title_activity_add_edit">Add/Edit a movie</string>
     <string name="add_edit_watched">Seen the movie?</string>
     <string name="add_edit_pic">Enter a URL for a thumbnail</string>

@@ -57,9 +57,9 @@ public class DeleteMovieDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final Movie movie = (Movie) getArguments().getSerializable(EXTRA_MOVIE);
-		
+		String title = movie.getTitle();
 		return new AlertDialog.Builder(getActivity()).setTitle("Delete")
-				.setMessage("Are you sure you want to delete this movie?")
+				.setMessage("Are you sure you want to delete " + title + "?")
 				.setPositiveButton("Yes", new OnClickListener() {
 
 					@Override

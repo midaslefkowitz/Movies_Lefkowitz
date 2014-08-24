@@ -7,11 +7,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.text.method.LinkMovementMethod;
-import android.widget.TextView.BufferType;
 
-import com.example.movies_lefkowitz.DetailFragment;
-import com.example.movies_lefkowitz.MainActivity;
 import com.example.movies_lefkowitz.R;
 
 public class Movie implements Serializable {

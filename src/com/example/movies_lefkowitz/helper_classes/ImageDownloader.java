@@ -43,6 +43,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 /**
  * This helper class download images from the Internet and binds those with the provided ImageView.
@@ -63,17 +64,16 @@ public class ImageDownloader {
      * @param url The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
      */
-    public void download(String url, Activity activity, ImageView imageView, int targetHeight) {
+    public void download(String url, Activity activity, ImageView imageView, int targetHeight, ProgressBar pb) {
         resetPurgeTimer();
-        
-        //String picFileName = url.substring(url.lastIndexOf('/')+1);
-        //Bitmap bitmap = getBitmapFromCache(picFileName);
+        pb.setVisibility(android.view.View.VISIBLE);
         Bitmap bitmap = getBitmapFromCache(url);
  
         if (bitmap == null) {
-            forceDownload(url, activity, imageView, targetHeight);
+            forceDownload(url, activity, imageView, targetHeight, pb);
         } else {
             cancelPotentialDownload(url, imageView);
+            pb.setVisibility(android.view.View.GONE);
             imageView.setImageBitmap(bitmap);
         }
     }
@@ -82,7 +82,7 @@ public class ImageDownloader {
      * Same as download but the image is always downloaded and the cache is not used.
      * Kept private at the moment as its interest is not clear.
      */
-    private void forceDownload(String url, Activity activity, ImageView imageView, int targetHeight) {
+    private void forceDownload(String url, Activity activity, ImageView imageView, int targetHeight, ProgressBar pb) {
         // State sanity: url is guaranteed to never be null in DownloadedDrawable and cache keys.
         if (url == null) {
             imageView.setImageDrawable(null);
@@ -90,7 +90,7 @@ public class ImageDownloader {
         }
 
         if (cancelPotentialDownload(url, imageView)) {
-        	BitmapDownloaderTask task = new BitmapDownloaderTask(activity, imageView, targetHeight);
+        	BitmapDownloaderTask task = new BitmapDownloaderTask(activity, imageView, targetHeight, pb);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
             task.execute(url);        
@@ -218,22 +218,24 @@ public class ImageDownloader {
     	private Activity activity;
     	private WeakReference<ImageView> imageViewReference;
     	private int targetHeight;
+    	private ProgressBar pb;
     	private String url;
     	
     	/* Constructor */	
-    	 public BitmapDownloaderTask(Activity activity, ImageView iv, int targetHeight) {
+    	 public BitmapDownloaderTask(Activity activity, ImageView iv, int targetHeight, ProgressBar pb) {
     		this.activity = activity;
     		this.imageViewReference = new WeakReference<ImageView>(iv);
     		this.targetHeight = targetHeight;
+    		this.pb = pb;
     	}
+    	 
+        @Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+		}
 
-    	 /* Old constructor
-        public BitmapDownloaderTask(ImageView imageView) {
-            this.imageViewReference = new WeakReference<ImageView>(imageView);
-        }
-        */
-
-        /**
+		/**
          * Actual download method.
          */
         @Override
@@ -247,13 +249,11 @@ public class ImageDownloader {
          */
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+        	pb.setVisibility(android.view.View.GONE);
             if (isCancelled()) {
                 bitmap = null;
             }
             bitmap = scaleImage(bitmap);
-            //String picFileName = url.substring(url.lastIndexOf('/')+1);
-            //addBitmapToCache(picFileName, bitmap);
-            
             addBitmapToCache(url, bitmap);
             
             if (imageViewReference != null) {
@@ -294,7 +294,6 @@ public class ImageDownloader {
     	}
     }
 
-
     /**
      * A fake Drawable that will be attached to the imageView while the download is in progress.
      *
@@ -324,8 +323,8 @@ public class ImageDownloader {
      * Garbage Collector.
      */
     
-    private static final int HARD_CACHE_CAPACITY = 10;
-    private static final int DELAY_BEFORE_PURGE = 10 * 1000; // in milliseconds
+    private static final int HARD_CACHE_CAPACITY = 25;
+    private static final int DELAY_BEFORE_PURGE = 25 * 1000; // in milliseconds
 
     // Hard cache, with a fixed maximum capacity and a life duration
     private final HashMap<String, Bitmap> sHardBitmapCache =
@@ -359,9 +358,7 @@ public class ImageDownloader {
      */
     private void addBitmapToCache(String url, Bitmap bitmap) {
         if (bitmap != null) {
-        	//String picFileName = url.substring(url.lastIndexOf('/')+1);
             synchronized (sHardBitmapCache) {
-                //sHardBitmapCache.put(picFileName, bitmap);
             	sHardBitmapCache.put(url, bitmap);
             }
         }
@@ -378,10 +375,6 @@ public class ImageDownloader {
             if (bitmap != null) {
                 // Bitmap found in hard cache
                 // Move element to first position, so that it is removed last
-            	
-            	//String picFileName = url.substring(url.lastIndexOf('/')+1);
-                //sHardBitmapCache.remove(picFileName);
-                //sHardBitmapCache.put(picFileName, bitmap);
                 
                 sHardBitmapCache.remove(url);
                 sHardBitmapCache.put(url, bitmap);

@@ -1,10 +1,3 @@
-/*
- * TODO: 
- * 1. Need to implement saving in onPause and loading in onResume 
- * 2. Only show delete all action item if there are movies in the db
- * 3. Side by side fragments of movies and details
- */
-
 package com.example.movies_lefkowitz;
 
 import android.app.Activity;
@@ -28,6 +21,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -284,6 +278,8 @@ public class MainFragment extends Fragment
 					.findViewById(R.id.list_item_thumb);
 			ImageView watchCheckIV = (ImageView) movieView
 					.findViewById(R.id.list_item_check);
+			ProgressBar progressBarPB = (ProgressBar) movieView
+					.findViewById(R.id.list_item_pb);
 			TextView titleTV = (TextView) movieView
 					.findViewById(R.id.list_item_title);
 			TextView descriptionTV = (TextView) movieView
@@ -296,7 +292,7 @@ public class MainFragment extends Fragment
 			/* Load the image to the thumbnail */
 			mThumbnailIV.setImageResource(R.drawable.thumb);
 			MainActivity.GetImage.download(movie.getPic(),
-					getActivity(), mThumbnailIV, TARGET_HEIGHT);
+					getActivity(), mThumbnailIV, TARGET_HEIGHT, progressBarPB);
 
 			/* Displayed checkmark image (green/grey) depends if user has seen the movie */
 			if (movie.getWatched() == Movie.UNWATCHED) {
