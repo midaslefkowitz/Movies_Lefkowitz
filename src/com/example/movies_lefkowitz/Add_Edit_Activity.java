@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.movies_lefkowitz.dialogs.GenrePickerFragment;
+import com.example.movies_lefkowitz.dialogs.PicUrlDialog;
 import com.example.movies_lefkowitz.dialogs.RatingPickerFragment;
 import com.example.movies_lefkowitz.model.Movie;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
@@ -56,11 +58,13 @@ public class Add_Edit_Activity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class PlaceholderFragment extends Fragment 
+	implements PicUrlDialog.PicUrlDialogListener {
 		private static final String GENRE_DIALOG_TAG = "genre dialog";
 		private static String RATING_DIALOG_TAG = "rating dialog";	
 		private static final int REQUEST_GENRE = 0;
 		private static final int REQUEST_RATING = 1;
+		private static final int REQUEST_URL = 2;
 		private static final int TARGET_HEIGHT = 140;
 		
 		private View mRootView;
@@ -70,7 +74,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private TextView mRatingTV;
 		private TextView mMyRatingTV;
 		private SeekBar sb;
-		private EditText eUrl;
 
 		private ArrayList<String> mGenreArray;
 		private String mGenre;
@@ -90,6 +93,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					false);
 			mProgressBarPB = (ProgressBar) mRootView
 						.findViewById(R.id.add_edit_pb);
+			mThumbnail = (ImageView) mRootView.findViewById(R.id.add_edit_thumb);
 			Intent intent = getActivity().getIntent();
 			mIsNew = intent.getBooleanExtra("isNew", true);			
 			if (mIsNew) {
@@ -99,20 +103,10 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				mMovie = (Movie) intent.getSerializableExtra("movie");
 				getActivity().setTitle(getResources()
 						.getString(R.string.edit) + " \"" + mMovie.getTitle() + " \"");
-			}
-			
-			setGenreTV();
-			setLoadPicFromUrlHandler();
-			setGenreHandler();
-			setRatingHandler();
-			setSeekBarHandler();
-			setCancelHandler();
-			setSaveHandler();
-			
-			if (!mIsNew) {
+				mUrl = mMovie.getPic();
 				setGenreArray(mMovie);
 				setWatched(mMovie);
-				setUrlTV(mMovie);
+				setThumbnail(mUrl);
 				set_title(mMovie);
 				setYear(mMovie);
 				setGenreTV(mMovie);
@@ -123,6 +117,14 @@ public class Add_Edit_Activity extends ActionBarActivity {
 				setCast(mMovie);
 				setDirectors(mMovie);
 			}
+
+			setGenreTV();
+			setGetPicUrlHandler();
+			setGenreHandler();
+			setRatingHandler();
+			setSeekBarHandler();
+			setCancelHandler();
+			setSaveHandler();
 			
 			return mRootView;
 		}
@@ -154,14 +156,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			watchedCB.setSelected(movie.getWatched() == Movie.WATCHED);
 		}
 		
-		private void setUrlTV(Movie movie){
-			EditText picEditText = (EditText) mRootView
-					.findViewById(R.id.add_edit_pic);
-			String url = movie.getPic();
-			picEditText.setText(url);
-			setThumbnail(url);
-		}
-		
 		private void setThumbnail (String url){
 			MainActivity.GetImage.download(url, 
 					getActivity(), 
@@ -188,7 +182,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		
 		private void setRatingTV(Movie movie) {
 			mRatingTV = (TextView) mRootView.findViewById(R.id.add_edit_rating_select);
-			mRatingTV.setText(movie.getMpaa_rating());
+			mRatingTV.setText("Rating: " + movie.getMpaa_rating());
 		}
 		
 		private void setRuntime(Movie movie) {
@@ -239,24 +233,31 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			}
 		}
 
-		private void setLoadPicFromUrlHandler() {
-			eUrl = (EditText) mRootView
-					.findViewById(R.id.add_edit_pic);
-			
+		private void setGetPicUrlHandler() {
 			mThumbnail = (ImageView) mRootView
 					.findViewById(R.id.add_edit_thumb);
-			Button previewButton = (Button) mRootView.findViewById(R.id.add_edit_preview);
-			previewButton.setOnClickListener(new View.OnClickListener() {
+			Button loadButton = (Button) mRootView.findViewById(R.id.add_edit_reload);
+			loadButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mUrl = eUrl.getText().toString().trim();
-					MainActivity.GetImage.download(mUrl, 
-							getActivity(), 
-							mThumbnail, 
-							TARGET_HEIGHT,
-							mProgressBarPB);
+					FragmentManager fm = getActivity()
+							.getSupportFragmentManager();
+					PicUrlDialog dialog = PicUrlDialog.newInstance(mUrl);
+					dialog.setTargetFragment(PlaceholderFragment.this, REQUEST_URL);
+					dialog.show(fm, "pic_url_dialog");
 				}
 			});
+		}
+
+		@Override
+		public void onPicUrlDialogPositiveClick(DialogFragment dialog, String url) {
+			mUrl = url;
+			setThumbnail(url);
+		}
+
+		@Override
+		public void onPicUrlDialogNegativeClick(DialogFragment dialog) {
+			return;			
 		}
 		
 		/*
@@ -432,10 +433,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
 					mMovie.setWatched(watchedCB.isChecked() ? Movie.WATCHED : Movie.UNWATCHED);
 					// get pic URL
-					EditText picEditText = (EditText) mRootView
-							.findViewById(R.id.add_edit_pic);
-					String pic = picEditText.getText().toString().trim();
-					mMovie.setPic(pic);
+					mMovie.setPic(mUrl);
 					// get year
 					TextView yearEditText = (TextView) mRootView.findViewById(R.id.add_edit_year);
 					String yearText = yearEditText.getText().toString().trim();
@@ -459,8 +457,6 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					// get director
 					EditText dirEditText = (EditText) mRootView.findViewById(R.id.add_edit_director);
 					mMovie.setDirector(dirEditText.getText().toString().trim());
-					
-					
 					
 					MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
 					if (mIsNew) {

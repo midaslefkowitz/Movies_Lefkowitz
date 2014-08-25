@@ -81,7 +81,6 @@
                 android:id="@+id/add_edit_reload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
                 android:text="@string/add_edit_reload" />
 
             <TextView

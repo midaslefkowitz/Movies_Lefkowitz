@@ -39,6 +39,7 @@
     <string name="add_edit_watched">Seen the movie?</string>
     <string name="add_edit_pic">Enter a URL for a thumbnail</string>
     <string name="add_edit_preview">Preview the Thumbnail</string>
+    <string name="add_edit_reload">Load a Thumbnail</string>
     <string name="add_edit_title">What\'s the movie title?</string>
     <string name="add_edit_year">When was it released?</string>
     <string name="add_edit_genre">Genre</string>

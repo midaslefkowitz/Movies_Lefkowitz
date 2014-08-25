@@ -300,6 +300,9 @@ public class MainFragment extends Fragment
 			} else {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
 			}
+			
+			
+			
 
 			/* Display the title textview with title and year span */
 			titleTV.setText(DetailFragment.getTitleYearSpan(getActivity(),
