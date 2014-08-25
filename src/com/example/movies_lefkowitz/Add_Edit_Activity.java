@@ -1,3 +1,22 @@
+/*
+
+Add checkmark click handler
+			watchCheckIV.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (movie.getWatched() == Movie.UNWATCHED) {
+						watchCheckIV.setImageResource(R.drawable.checkmark_green);
+						movie.setWatched(Movie.WATCHED);
+					} else {
+						watchCheckIV.setImageResource(R.drawable.checkmark_grey);
+						movie.setWatched(Movie.UNWATCHED);
+					}
+				}
+			}); 
+*/
+
+
+
 package com.example.movies_lefkowitz;
 
 import java.util.ArrayList;
@@ -69,6 +88,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		
 		private View mRootView;
 		private ImageView mThumbnail;
+		private ImageView mWatchCheckIV;
 		private ProgressBar mProgressBarPB;
 		private TextView mGenreTV;
 		private TextView mRatingTV;
@@ -83,6 +103,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 		private double mMyRating;
 		private Movie mMovie = null;
 		private boolean mIsNew = true;
+		private boolean watched = false;
 		
 		public PlaceholderFragment() {}
 
@@ -94,6 +115,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			mProgressBarPB = (ProgressBar) mRootView
 						.findViewById(R.id.add_edit_pb);
 			mThumbnail = (ImageView) mRootView.findViewById(R.id.add_edit_thumb);
+			mWatchCheckIV = (ImageView) mRootView.findViewById(R.id.add_edit_check);
 			Intent intent = getActivity().getIntent();
 			mIsNew = intent.getBooleanExtra("isNew", true);			
 			if (mIsNew) {
@@ -120,6 +142,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 
 			setGenreTV();
 			setGetPicUrlHandler();
+			setWatchedHandler();
 			setGenreHandler();
 			setRatingHandler();
 			setSeekBarHandler();
@@ -146,14 +169,19 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			}
 		}
 
-		private void setGenreArray(Movie mMovie) {
-			String genres = mMovie.getGenre();
+		private void setGenreArray(Movie movie) {
+			String genres = movie.getGenre();
 			mGenreArray = GenrePickerFragment.genreStringToArray(genres);
 		}
 		
 		private void setWatched(Movie movie) {
-			CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-			watchedCB.setSelected(movie.getWatched() == Movie.WATCHED);
+			if (movie.getWatched() == Movie.UNWATCHED) {
+				mWatchCheckIV.setImageResource(R.drawable.checkmark_grey);
+				watched = false;
+			} else {
+				mWatchCheckIV.setImageResource(R.drawable.checkmark_green);
+				watched = true;
+			}
 		}
 		
 		private void setThumbnail (String url){
@@ -245,6 +273,23 @@ public class Add_Edit_Activity extends ActionBarActivity {
 					PicUrlDialog dialog = PicUrlDialog.newInstance(mUrl);
 					dialog.setTargetFragment(PlaceholderFragment.this, REQUEST_URL);
 					dialog.show(fm, "pic_url_dialog");
+				}
+			});
+		}
+		
+		private void setWatchedHandler() {
+			mWatchCheckIV.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (mMovie.getWatched() == Movie.UNWATCHED) {
+						mWatchCheckIV.setImageResource(R.drawable.checkmark_green);
+						mMovie.setWatched(Movie.WATCHED);
+						watched = true;
+					} else {
+						mWatchCheckIV.setImageResource(R.drawable.checkmark_grey);
+						mMovie.setWatched(Movie.UNWATCHED);
+						watched = false;
+					}					
 				}
 			});
 		}
@@ -430,8 +475,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 						mMovie.setTitle(title);
 					}
 					// get watched
-					CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
-					mMovie.setWatched(watchedCB.isChecked() ? Movie.WATCHED : Movie.UNWATCHED);
+					mMovie.setWatched((watched) ? Movie.WATCHED : Movie.UNWATCHED);
 					// get pic URL
 					mMovie.setPic(mUrl);
 					// get year

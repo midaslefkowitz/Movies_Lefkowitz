@@ -276,7 +276,7 @@ public class MainFragment extends Fragment
 			
 			mThumbnailIV = (ImageView) movieView
 					.findViewById(R.id.list_item_thumb);
-			final ImageView watchCheckIV = (ImageView) movieView
+			ImageView watchCheckIV = (ImageView) movieView
 					.findViewById(R.id.list_item_check);
 			ProgressBar progressBarPB = (ProgressBar) movieView
 					.findViewById(R.id.list_item_pb);
@@ -299,22 +299,7 @@ public class MainFragment extends Fragment
 				watchCheckIV.setImageResource(R.drawable.checkmark_grey);
 			} else {
 				watchCheckIV.setImageResource(R.drawable.checkmark_green);
-			}
-			
-			/* Add checkmark click handler */
-			watchCheckIV.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (movie.getWatched() == Movie.UNWATCHED) {
-						watchCheckIV.setImageResource(R.drawable.checkmark_green);
-						movie.setWatched(Movie.WATCHED);
-					} else {
-						watchCheckIV.setImageResource(R.drawable.checkmark_grey);
-						movie.setWatched(Movie.UNWATCHED);
-					}
-				}
-			});
-			
+			}			
 
 			/* Display the title textview with title and year span */
 			titleTV.setText(DetailFragment.getTitleYearSpan(getActivity(),
