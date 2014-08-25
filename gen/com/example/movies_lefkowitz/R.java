@@ -1092,9 +1092,10 @@ containing a value of this type.
         public static final int mpaa_pg13=0x7f02005f;
         public static final int mpaa_restricted=0x7f020060;
         public static final int mpaa_ur=0x7f020061;
-        public static final int rt_fresh=0x7f020062;
-        public static final int star_icon=0x7f020063;
-        public static final int thumb=0x7f020064;
+        public static final int popcorn=0x7f020062;
+        public static final int rt_fresh=0x7f020063;
+        public static final int star_icon=0x7f020064;
+        public static final int thumb=0x7f020065;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f050057;

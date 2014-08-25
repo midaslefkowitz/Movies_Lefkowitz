@@ -110,6 +110,7 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			setSaveHandler();
 			
 			if (!mIsNew) {
+				setGenreArray(mMovie);
 				setWatched(mMovie);
 				setUrlTV(mMovie);
 				set_title(mMovie);
@@ -143,6 +144,11 @@ public class Add_Edit_Activity extends ActionBarActivity {
 			}
 		}
 
+		private void setGenreArray(Movie mMovie) {
+			String genres = mMovie.getGenre();
+			mGenreArray = GenrePickerFragment.genreStringToArray(genres);
+		}
+		
 		private void setWatched(Movie movie) {
 			CheckBox watchedCB = (CheckBox) mRootView.findViewById(R.id.add_edit_watched);
 			watchedCB.setSelected(movie.getWatched() == Movie.WATCHED);

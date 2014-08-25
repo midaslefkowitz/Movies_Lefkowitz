@@ -247,9 +247,10 @@ int drawable mpaa_pg 0x7f02005e
 int drawable mpaa_pg13 0x7f02005f
 int drawable mpaa_restricted 0x7f020060
 int drawable mpaa_ur 0x7f020061
-int drawable rt_fresh 0x7f020062
-int drawable star_icon 0x7f020063
-int drawable thumb 0x7f020064
+int drawable popcorn 0x7f020062
+int drawable rt_fresh 0x7f020063
+int drawable star_icon 0x7f020064
+int drawable thumb 0x7f020065
 int id RelativeLayout1 0x7f050057
 int id action_add 0x7f050079
 int id action_bar 0x7f05001c
