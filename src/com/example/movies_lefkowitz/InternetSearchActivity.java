@@ -200,7 +200,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 			/* Constants */
 			private final String LOG_TAG = GetMoviesTask.class.getSimpleName();
-			private final String MOVIE_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
 			private final String MOVIES_BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?";
 			private final String PAGE_LIMIT_PARAM = "page_limit";
 			private final String NUM_MOVIES = "10";
@@ -295,21 +294,6 @@ public class InternetSearchActivity extends ActionBarActivity {
 				return null;
 			}
 
-			private URL getMovieURL(String param) {
-				// Construct the URL for the rotten tomato query
-				Uri builtUri = Uri.parse(MOVIE_BASE_URL + param + ".json?")
-						.buildUpon().appendQueryParameter(API_PARAM, MY_API)
-						.build();
-				URL url = null;
-
-				try {
-					url = new URL(builtUri.toString());
-				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
-				}
-				return url;
-			}
-
 			private URL getMoviesURL(String param) {
 
 				// Construct the URL for the rotten tomato query
@@ -342,15 +326,13 @@ public class InternetSearchActivity extends ActionBarActivity {
 					try {
 						// get movie from the list
 						js = (JSONObject) movieArray.get(i);
-						URL detailedMovieURL;
+//						URL detailedMovieURL;
 						Movie movie = null;
 
 						if (js.has("id")) {
 							// if it has a rotten id then get the detailed
-							// version of the movie
+							// version of the movie in detail fragment
 							rottenId = js.getString("id");
-							detailedMovieURL = getMovieURL(rottenId);
-							js = new JSONObject(getJSONString(detailedMovieURL));
 						} else {
 							// if no id then no movie no point in parsing
 							return null;
@@ -365,7 +347,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 						if (js.has("year")) {
 							String year = js.getString("year");
-							movie.setYear(Integer.parseInt(year));
+							movie.setYear((year.length()>0) ? Integer.parseInt(year) : 0);
 						}
 
 						if (js.has("posters")) {
@@ -383,7 +365,8 @@ public class InternetSearchActivity extends ActionBarActivity {
 						if (js.has("ratings")) {
 							String rating = js.getJSONObject("ratings")
 									.getString("audience_score");
-							movie.setRt_rating((Double.parseDouble(rating)) / 10);
+							double rtRating = (rating.length()>0) ? (Double.parseDouble(rating)) / 10 : 0 ;
+							movie.setRt_rating(rtRating);
 						}
 
 						if (js.has("genres")) {
@@ -434,9 +417,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 
 						if (js.has("runtime")) {
 							String runtime = js.getString("runtime");
-							if (runtime.length() > 0) {
-								movie.setRuntime(Integer.parseInt(runtime));
-							}
+							movie.setRuntime((runtime.length() > 0) ? Integer.parseInt(runtime) : 0);
 						}
 
 						movie.setWatched(0);

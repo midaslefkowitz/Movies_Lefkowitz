@@ -116,7 +116,7 @@ public class DetailFragment extends Fragment {
 			setSaveHandler();
 			setCancelHandler();
 		} 
-		
+		/* First display movie attributes that we have */
 
 		/* Set placeholder thumbnail before try to download */
 		mThumbnailIV.setImageResource(R.drawable.thumb);
@@ -183,6 +183,7 @@ public class DetailFragment extends Fragment {
 		mDirectorTV.setText(mMovie.getDirector());
 		
 		if (mMovie.getRottenID()>0) {
+			/* Check the detailed movie url for changes/more info */
 			GetMoviesTask movieTask = new GetMoviesTask(getActivity());
 			movieTask.execute(Long.toString(mMovie.getRottenID() ) );
 		} 
@@ -197,7 +198,6 @@ public class DetailFragment extends Fragment {
 				getActivity().finish();
 			}
 		});
-		
 	}
 
 	private void setSaveHandler() {
@@ -355,11 +355,12 @@ public class DetailFragment extends Fragment {
 				
 				if (js.has("year")) {
 					String year = js.getString("year");
-					movie.setYear(Integer.parseInt(year));
+					movie.setYear((year.length()>0) ? Integer.parseInt(year) : 0);
 				}
 				
 				if (js.has("id")) {
-					movie.setRottenID(Integer.parseInt(js.getString("id") ) );
+					String rottenID = js.getString("id");
+					movie.setRottenID((rottenID.length()>0) ? Integer.parseInt(rottenID) : 0);
 				}
 				
 				if (js.has("posters")) {
@@ -388,7 +389,8 @@ public class DetailFragment extends Fragment {
 				
 				if (js.has("ratings")) {
 					String rating = js.getJSONObject("ratings").getString("audience_score");
-					movie.setRt_rating((Double.parseDouble(rating))/10); 
+					double rtRating = (rating.length()>0) ? (Double.parseDouble(rating)) / 10 : 0 ;
+					movie.setRt_rating(rtRating); 
 				}
 				
 				if (js.has("runtime")) {
