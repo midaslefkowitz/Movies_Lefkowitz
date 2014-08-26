@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -51,7 +52,7 @@ import com.example.movies_lefkowitz.model.MovieHolder;
 import com.example.movies_lefkowitz.model.MoviesDBAdapter;
 
 public class InternetSearchActivity extends ActionBarActivity {
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,6 +88,9 @@ public class InternetSearchActivity extends ActionBarActivity {
 		private ListView mListview;
 		private ArrayAdapter<Movie> mMoviesAdapter;
 		private InputMethodManager imm = null;
+		private Movie [] mMovieArray;
+		
+		private static final String MOVIE_LIST_TAG = "movie_list";
 		
 		private static final int TARGET_HEIGHT = 120;
 
@@ -101,6 +105,13 @@ public class InternetSearchActivity extends ActionBarActivity {
 					.findViewById(R.id.internet_search_listView);
 			setSearchClickHandler();
 			setCancelHandler();
+			if (savedInstanceState != null) {
+	            // Restore mMovieArray
+				mMovieArray = (Movie[]) savedInstanceState.getSerializable(MOVIE_LIST_TAG);
+				if (mMovieArray != null && mMovieArray.length>0) {
+					addListToAdapter(Arrays.asList(mMovieArray));
+				}
+	        }
 			registerForContextMenu(mListview);
 			return mRootView;
 		}
@@ -109,7 +120,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 		public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		    
+			
 		}
 
 		@Override
@@ -117,7 +128,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 				ContextMenuInfo menuInfo) {
 			getActivity().getMenuInflater()
 					.inflate(R.menu.search_context, menu);
-		}
+		}		
 
 		@Override
 		public boolean onContextItemSelected(MenuItem item) {
@@ -141,9 +152,16 @@ public class InternetSearchActivity extends ActionBarActivity {
 			}
 		}
 
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			super.onSaveInstanceState(outState);
+			outState.putSerializable(MOVIE_LIST_TAG, mMovieArray);
+		}
+
 		private void addMovie(Movie movie) {
 			MoviesDBAdapter db = new MoviesDBAdapter(getActivity());
 			db.addMovie(movie);
+			mMovieArray = null;
 			getActivity().setResult(RESULT_OK);
 			getActivity().finish();
 		}
@@ -179,6 +197,7 @@ public class InternetSearchActivity extends ActionBarActivity {
 			cancel.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					mMovieArray = null;
 					getActivity().finish();
 				}
 			});
@@ -195,6 +214,97 @@ public class InternetSearchActivity extends ActionBarActivity {
 			movies.execute(input);
 		}
 
+		protected void addListToAdapter (List<Movie> movs) {
+			
+			mMoviesAdapter = new ArrayAdapter<Movie>(getActivity(), -1, movs) {
+
+				@Override
+				public View getView(int position, View convertView,
+						ViewGroup parent) {
+					Movie movie = getItem(position);
+					View movieView = convertView;
+
+					if (movieView == null) {
+						movieView = getActivity().getLayoutInflater().inflate(
+								R.layout.item_layout, null);
+						MovieHolder holder = new MovieHolder();
+						movieView.setTag(holder);
+					}
+
+					final MovieHolder holder = (MovieHolder) movieView
+							.getTag();
+					holder.setMovie(movie);
+
+					ImageView thumbnailIV = (ImageView) movieView
+							.findViewById(R.id.list_item_thumb);
+					ImageView watchCheckIV = (ImageView) movieView
+							.findViewById(R.id.list_item_check);
+					ProgressBar progressBarPB = (ProgressBar) movieView
+							.findViewById(R.id.list_item_pb);
+					TextView titleTV = (TextView) movieView
+							.findViewById(R.id.list_item_title);
+					TextView descriptionTV = (TextView) movieView
+							.findViewById(R.id.list_item_description);
+					TextView rt_ratingTV = (TextView) movieView
+							.findViewById(R.id.list_item_rt_rating);
+					TextView my_ratingTV = (TextView) movieView
+							.findViewById(R.id.list_item_my_rating);
+
+					thumbnailIV.setImageResource(R.drawable.thumb);
+					MainActivity.GetImage.download(movie.getPic(),
+							getActivity(), thumbnailIV, TARGET_HEIGHT, progressBarPB);
+
+					/*
+					 * Displayed checkmark image (green/grey) depends if
+					 * user has seen the movie
+					 */
+					if (movie.getWatched() == Movie.UNWATCHED) {
+						watchCheckIV
+								.setImageResource(R.drawable.checkmark_grey);
+					} else {
+						watchCheckIV
+								.setImageResource(R.drawable.checkmark_green);
+					}
+
+					/* Display title */
+					titleTV.setText(DetailFragment.getTitleYearSpan(
+							getActivity(), movie.getTitle(),
+							movie.getYear()), BufferType.SPANNABLE);
+
+					/* Display description */
+					descriptionTV.setText(movie.getDescription());
+
+					/* Display Rotten Rating */
+					rt_ratingTV.setText(Double.toString(movie
+							.getRt_rating()));
+
+					/* Display User Rating */
+					my_ratingTV.setText(Double.toString(movie
+							.getUser_rating()));
+
+					return movieView;
+				}
+			};
+			mListview.setAdapter(mMoviesAdapter);
+			
+
+			/* Add Click Listener */
+			mListview.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					Intent intent = new Intent(getActivity(),
+							DetailsActivity.class);
+					Movie movie = ((MovieHolder) (view.getTag()))
+							.getMovie();
+					intent.putExtra("source", "InternetSearchActivity");
+					intent.putExtra("isNew", true);
+					intent.putExtra("movie", movie);
+					startActivity(intent);
+				}
+			});
+		}
+		
 		private class GetMoviesTask extends
 				AsyncTask<String, Void, List<Movie>> {
 
@@ -455,94 +565,21 @@ public class InternetSearchActivity extends ActionBarActivity {
 							Toast.LENGTH_LONG).show();
 					return;
 				}
-
-				mMoviesAdapter = new ArrayAdapter<Movie>(activity, -1, movies) {
-
-					@Override
-					public View getView(int position, View convertView,
-							ViewGroup parent) {
-						Movie movie = getItem(position);
-						View movieView = convertView;
-
-						if (movieView == null) {
-							movieView = activity.getLayoutInflater().inflate(
-									R.layout.item_layout, null);
-							MovieHolder holder = new MovieHolder();
-							movieView.setTag(holder);
-						}
-
-						final MovieHolder holder = (MovieHolder) movieView
-								.getTag();
-						holder.setMovie(movie);
-
-						ImageView thumbnailIV = (ImageView) movieView
-								.findViewById(R.id.list_item_thumb);
-						ImageView watchCheckIV = (ImageView) movieView
-								.findViewById(R.id.list_item_check);
-						ProgressBar progressBarPB = (ProgressBar) movieView
-								.findViewById(R.id.list_item_pb);
-						TextView titleTV = (TextView) movieView
-								.findViewById(R.id.list_item_title);
-						TextView descriptionTV = (TextView) movieView
-								.findViewById(R.id.list_item_description);
-						TextView rt_ratingTV = (TextView) movieView
-								.findViewById(R.id.list_item_rt_rating);
-						TextView my_ratingTV = (TextView) movieView
-								.findViewById(R.id.list_item_my_rating);
-
-						thumbnailIV.setImageResource(R.drawable.thumb);
-						MainActivity.GetImage.download(movie.getPic(),
-								activity, thumbnailIV, TARGET_HEIGHT, progressBarPB);
-
-						/*
-						 * Displayed checkmark image (green/grey) depends if
-						 * user has seen the movie
-						 */
-						if (movie.getWatched() == Movie.UNWATCHED) {
-							watchCheckIV
-									.setImageResource(R.drawable.checkmark_grey);
-						} else {
-							watchCheckIV
-									.setImageResource(R.drawable.checkmark_green);
-						}
-
-						/* Display title */
-						titleTV.setText(DetailFragment.getTitleYearSpan(
-								getActivity(), movie.getTitle(),
-								movie.getYear()), BufferType.SPANNABLE);
-
-						/* Display description */
-						descriptionTV.setText(movie.getDescription());
-
-						/* Display Rotten Rating */
-						rt_ratingTV.setText(Double.toString(movie
-								.getRt_rating()));
-
-						/* Display User Rating */
-						my_ratingTV.setText(Double.toString(movie
-								.getUser_rating()));
-
-						return movieView;
-					}
-				};
-				mListview.setAdapter(mMoviesAdapter);
-
-				/* Add Click Listener */
-				mListview.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						Intent intent = new Intent(getActivity(),
-								DetailsActivity.class);
-						Movie movie = ((MovieHolder) (view.getTag()))
-								.getMovie();
-						intent.putExtra("source", "InternetSearchActivity");
-						intent.putExtra("isNew", true);
-						intent.putExtra("movie", movie);
-						startActivity(intent);
-					}
-				});
+				mMovieArray = movies.toArray(new Movie[movies.size()]);
+				addListToAdapter(movies);
 			}
 		}
 	}
 }
+
+
+/*
+@Override
+public void onResume() {
+	super.onResume();
+	if (mMovieList != null && mMovieList.size()>0) {
+		addListToAdapter(mMovieList);
+		// mMovieList = null;
+	}
+}
+*/
